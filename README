@@ -1,3 +1,8 @@
 File/Folder		Descr
 plexconvert		the plexconvter
 YTIE			bulshit to title/artist
+
+
+ToDo
+- add youtube-dl als dl engine to avoid jdownloader-headless
+- rewrite code to avoid vomiting
