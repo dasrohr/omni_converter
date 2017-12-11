@@ -1,0 +1,7 @@
+to learn New model:
+
+java -jar ExtractTitleArtist.jar -learn model learnFileFinal.iob
+
+to classify song: 
+
+java -jar ExtractTitleArtist.jar -use model "Some Artist - Some SongTitle [Mega Dubstep Remix]" 2>/dev/null

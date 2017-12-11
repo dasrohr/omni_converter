@@ -1,0 +1,3 @@
+#Task properties
+#Mon Mar 06 15:45:41 CET 2017
+TcTaskType=INIT_TRAIN

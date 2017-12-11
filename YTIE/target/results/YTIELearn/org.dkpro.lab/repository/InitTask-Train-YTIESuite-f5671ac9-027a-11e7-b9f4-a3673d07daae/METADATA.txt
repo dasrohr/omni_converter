@@ -1,0 +1,6 @@
+#Mon Mar 06 15:41:21 CET 2017
+end=1488811280890
+uuid=InitTask-Train-YTIESuite-f5671ac9-027a-11e7-b9f4-a3673d07daae
+type=org.dkpro.tc.core.task.InitTask-Train-YTIESuite
+begin=1488811280345
+duration=0s

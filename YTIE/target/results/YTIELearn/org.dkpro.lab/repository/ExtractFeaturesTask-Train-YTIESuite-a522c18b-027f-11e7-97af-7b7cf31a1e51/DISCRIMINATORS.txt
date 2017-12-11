@@ -1,0 +1,23 @@
+#Mon Mar 06 16:14:51 CET 2017
+org.dkpro.tc.core.task.InitTask|featureMode=sequence
+org.dkpro.tc.core.task.InitTask|readerTrain=[learningEngine.reader.YTIEReader, useDefaultExcludes\=true, includeHidden\=false, language\=en, sourceLocation\=/root/scripts/YTIE/learnFileFinal.iob]
+org.dkpro.tc.core.task.InitTask|developerMode=false
+org.dkpro.tc.core.task.ExtractFeaturesTask|files_validation=null
+org.dkpro.tc.core.task.ExtractFeaturesTask|featureMode=sequence
+org.dkpro.tc.core.task.ExtractFeaturesTask|applyWeighting=false
+org.dkpro.tc.core.task.InitTask|featureSet=[org.dkpro.tc.features.style.InitialCharacterUpperCase| uniqueFeatureExtractorName, InitialCharacterUpperCase23670644214960115], [learningEngine.TC.extractors.SpecialCharExtractor| numFollowing, 2, numPreceeding, 2, uniqueFeatureExtractorName, SpecialCharExtractor23670644215286413], [learningEngine.TC.extractors.KeywordExtractor| numPreceeding, 1, numFollowing, 1, uniqueFeatureExtractorName, KeywordExtractor23670644215378452]
+org.dkpro.tc.core.task.ExtractFeaturesTask|files_training=null
+org.dkpro.tc.core.task.InitTask|learningMode=singleLabel
+org.dkpro.tc.core.task.InitTask|readerTest=null
+org.dkpro.tc.core.task.ExtractFeaturesTask|featureFilters=[]
+org.dkpro.tc.core.task.InitTask|threshold=null
+org.dkpro.tc.core.task.ExtractFeaturesTask|filesRoot=null
+org.dkpro.tc.core.task.MetaInfoTask|recordContext=false
+org.dkpro.tc.core.task.ExtractFeaturesTask|featureSet=[org.dkpro.tc.features.style.InitialCharacterUpperCase| uniqueFeatureExtractorName, InitialCharacterUpperCase23670644214960115], [learningEngine.TC.extractors.SpecialCharExtractor| numFollowing, 2, numPreceeding, 2, uniqueFeatureExtractorName, SpecialCharExtractor23670644215286413], [learningEngine.TC.extractors.KeywordExtractor| numPreceeding, 1, numFollowing, 1, uniqueFeatureExtractorName, KeywordExtractor23670644215378452]
+org.dkpro.tc.core.task.MetaInfoTask|featureMode=sequence
+org.dkpro.tc.core.task.ExtractFeaturesTask|developerMode=false
+org.dkpro.tc.core.task.ExtractFeaturesTask|featureStore=null
+org.dkpro.tc.core.task.ExtractFeaturesTask|learningMode=singleLabel
+org.dkpro.tc.core.task.MetaInfoTask|files_training=null
+org.dkpro.tc.core.task.MetaInfoTask|filesRoot=null
+org.dkpro.tc.core.task.MetaInfoTask|featureSet=[org.dkpro.tc.features.style.InitialCharacterUpperCase| uniqueFeatureExtractorName, InitialCharacterUpperCase23670644214960115], [learningEngine.TC.extractors.SpecialCharExtractor| numFollowing, 2, numPreceeding, 2, uniqueFeatureExtractorName, SpecialCharExtractor23670644215286413], [learningEngine.TC.extractors.KeywordExtractor| numPreceeding, 1, numFollowing, 1, uniqueFeatureExtractorName, KeywordExtractor23670644215378452]

@@ -1,0 +1,8 @@
+#Tue Feb 28 10:42:01 CET 2017
+end=1488274921931
+import.input.train=task-id\://ExtractFeaturesTask-Train-YTIESuite-2771d060-fd9a-11e6-bf94-75102fee8a3f/output
+uuid=CRFSuiteModelSerializationDescription-YTIESuite-27c7b891-fd9a-11e6-bf94-75102fee8a3f
+type=org.dkpro.tc.ml.crfsuite.task.serialization.CRFSuiteModelSerializationDescription-YTIESuite
+begin=1488274921632
+duration=0s
+import.meta=task-id\://MetaInfoTask-YTIESuite-2742f82f-fd9a-11e6-bf94-75102fee8a3f/meta

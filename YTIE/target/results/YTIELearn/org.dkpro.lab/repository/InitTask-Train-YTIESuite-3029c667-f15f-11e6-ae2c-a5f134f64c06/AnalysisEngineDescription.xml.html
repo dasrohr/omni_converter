@@ -1,0 +1,308 @@
+<html xmlns:uima="http://uima.apache.org/resourceSpecifier">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+                    .analysisEngineDescription {
+                        border: solid black 1px;
+                    }
+                    .delegateAnalysisEngineSpecifiers {
+                        margin-top: 1em;
+                        margin-left: 2.5em;
+                        border: solid black 1px;
+                    }
+                    .configurationParameterSettings th {
+                        text-align: left;
+                        vertical-align: text-top;
+                    }
+                    .analysisEngineDescription h4 {
+                        margin: 0px 0px 0px 0px;
+                        padding: 0px 0px 0px 0px;
+                        background: lightgray;
+                    }
+                </style>
+</head>
+<body>
+<div class="analysisEngineDescription">
+<h4>Aggregate Analysis Engine</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+<div class="delegateAnalysisEngineSpecifiers">
+        
+            
+<div class="analysisEngineDescription">
+<h4>org.dkpro.tc.core.task.uima.DocumentModeAnnotator</h4>
+<table class="configurationParameterSettings">
+<tbody>
+<tr>
+<th>PARAM_FEATURE_MODE</th><td>
+                                sequence
+                            </td>
+</tr>
+</tbody>
+</table>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>org.dkpro.tc.core.task.uima.AssignIdConnector</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>org.dkpro.tc.core.task.uima.ValidityCheckConnector</h4>
+<table class="configurationParameterSettings">
+<tbody>
+<tr>
+<th>dataWriterClass</th><td>
+                                org.dkpro.tc.ml.crfsuite.writer.CRFSuiteDataWriter
+                            </td>
+</tr>
+<tr>
+<th>developerMode</th><td>
+                                false
+                            </td>
+</tr>
+<tr>
+<th>featureExtractors</th><td>
+                                
+                                    org.dkpro.tc.features.style.InitialCharacterUpperCase
+                                    learningEngine.TC.extractors.SpecialCharExtractor
+                                    learningEngine.TC.extractors.KeywordExtractor
+                                
+                            </td>
+</tr>
+<tr>
+<th>featureMode</th><td>
+                                sequence
+                            </td>
+</tr>
+<tr>
+<th>learningMode</th><td>
+                                singleLabel
+                            </td>
+</tr>
+</tbody>
+</table>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>org.dkpro.tc.core.task.uima.PreprocessConnector</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>Aggregate Analysis Engine</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+<div class="delegateAnalysisEngineSpecifiers">
+                    
+                        
+<div class="analysisEngineDescription">
+<h4>de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordSegmenter</h4>
+<table class="configurationParameterSettings">
+<tbody>
+<tr>
+<th>allowEmptySentences</th><td>
+                                            false
+                                        </td>
+</tr>
+<tr>
+<th>boundaryFollowers</th><td>
+                                            
+                                                )
+                                                ]
+                                                }
+                                                "
+                                                '
+                                                ''
+                                                &rsquo;
+                                                &rdquo;
+                                                -RRB-
+                                                -RSB-
+                                                -RCB-
+                                                )
+                                                ]
+                                                }
+                                            
+                                        </td>
+</tr>
+<tr>
+<th>boundaryToDiscard</th><td>
+                                            
+                                                
+
+                                                *NL*
+                                            
+                                        </td>
+</tr>
+<tr>
+<th>boundaryTokenRegex</th><td>
+                                            \.|[!?]+
+                                        </td>
+</tr>
+<tr>
+<th>isOneSentence</th><td>
+                                            true
+                                        </td>
+</tr>
+<tr>
+<th>language</th><td>
+                                            en
+                                        </td>
+</tr>
+<tr>
+<th>newlineIsSentenceBreak</th><td>
+                                            TWO_CONSECUTIVE
+                                        </td>
+</tr>
+<tr>
+<th>strictZoning</th><td>
+                                            false
+                                        </td>
+</tr>
+<tr>
+<th>tokenRegexesToDiscard</th><td>
+                                            
+                                        </td>
+</tr>
+<tr>
+<th>writeSentence</th><td>
+                                            true
+                                        </td>
+</tr>
+<tr>
+<th>writeToken</th><td>
+                                            true
+                                        </td>
+</tr>
+<tr>
+<th>zoneTypes</th><td>
+                                            
+                                                de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Div
+                                            
+                                        </td>
+</tr>
+</tbody>
+</table>
+</div>
+                    
+                    
+                        
+<div class="analysisEngineDescription">
+<h4>learningEngine.annotators.SpecialCharAnnotator</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+</div>
+                    
+                    
+                        
+<div class="analysisEngineDescription">
+<h4>learningEngine.annotators.KeywordAnnotator</h4>
+<table class="configurationParameterSettings">
+<tbody></tbody>
+</table>
+</div>
+                    
+                
+</div>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>org.dkpro.tc.core.task.uima.ValidityCheckConnectorPost</h4>
+<table class="configurationParameterSettings">
+<tbody>
+<tr>
+<th>developerMode</th><td>
+                                false
+                            </td>
+</tr>
+<tr>
+<th>featureMode</th><td>
+                                sequence
+                            </td>
+</tr>
+<tr>
+<th>learningMode</th><td>
+                                singleLabel
+                            </td>
+</tr>
+</tbody>
+</table>
+</div>
+        
+        
+            
+<div class="analysisEngineDescription">
+<h4>de.tudarmstadt.ukp.dkpro.core.io.bincas.BinaryCasWriter</h4>
+<table class="configurationParameterSettings">
+<tbody>
+<tr>
+<th>compression</th><td>
+                                NONE
+                            </td>
+</tr>
+<tr>
+<th>escapeDocumentId</th><td>
+                                true
+                            </td>
+</tr>
+<tr>
+<th>filenameExtension</th><td>
+                                .bin
+                            </td>
+</tr>
+<tr>
+<th>format</th><td>
+                                6+
+                            </td>
+</tr>
+<tr>
+<th>overwrite</th><td>
+                                false
+                            </td>
+</tr>
+<tr>
+<th>singularTarget</th><td>
+                                false
+                            </td>
+</tr>
+<tr>
+<th>stripExtension</th><td>
+                                false
+                            </td>
+</tr>
+<tr>
+<th>targetLocation</th><td>
+                                target/results/YTIELearn/org.dkpro.lab/repository/InitTask-Train-YTIESuite-3029c667-f15f-11e6-ae2c-a5f134f64c06/preprocessorOutputTrain
+                            </td>
+</tr>
+<tr>
+<th>useDocumentId</th><td>
+                                false
+                            </td>
+</tr>
+</tbody>
+</table>
+</div>
+        
+    
+</div>
+</div>
+</body>
+</html>

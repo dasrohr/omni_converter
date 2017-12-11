@@ -1,0 +1,3 @@
+#Task properties
+#Mon Mar 06 16:18:08 CET 2017
+Subtasks=[InitTask-Train-YTIESuite-191dc3f0-0280-11e7-94e4-5bb63104fe07, MetaInfoTask-YTIESuite-19df6641-0280-11e7-94e4-5bb63104fe07, ExtractFeaturesTask-Train-YTIESuite-1a176632-0280-11e7-94e4-5bb63104fe07, CRFSuiteModelSerializationDescription-YTIESuite-1a7082b3-0280-11e7-94e4-5bb63104fe07]

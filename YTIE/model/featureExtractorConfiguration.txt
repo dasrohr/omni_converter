@@ -1,0 +1,3 @@
+org.dkpro.tc.features.style.InitialCharacterUpperCase	uniqueFeatureExtractorName=InitialCharacterUpperCase23670840426957880
+learningEngine.TC.extractors.SpecialCharExtractor	numFollowing=2	numPreceeding=2	uniqueFeatureExtractorName=SpecialCharExtractor23670840427264785
+learningEngine.TC.extractors.KeywordExtractor	numFollowing=1	numPreceeding=1	uniqueFeatureExtractorName=KeywordExtractor23670840427352296

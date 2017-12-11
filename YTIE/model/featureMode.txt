@@ -1,0 +1,3 @@
+#Feature mode used to train this model
+#Mon Mar 06 16:18:08 CET 2017
+featureMode=sequence

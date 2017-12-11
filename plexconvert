@@ -1,0 +1,143 @@
+#!/bin/bash
+#
+
+# log functions
+log_debug(){
+  [ $debug ] && logger -t "plexconvert [debug]" "$1"
+}
+log_warn(){
+  echo "log warn:: $1"
+}
+log_erro(){
+  echo "log erro:: $1"
+}
+
+# functions
+ytie(){
+  ytie_tmp=`mktemp`
+  log_debug "[ytie      ] :: start  :: ($1)"
+  java -jar $ytie_jar -use $ytie_model "$1" 2>>/dev/null | awk -F ": " '
+        /Artists: /     {artist=$2}
+        /Title: /       {title=$2}
+        /Remix: /       {rmx=$2}
+        END{printf "%s;%s %s",artist,title,rmx}' >> $ytie_tmp
+
+  log_debug "[ytie      ] :: debug  :: $ytie_tmp (`cat $ytie_tmp`)"
+  
+  declare -g artist title
+  artist=$(awk -F ";" '{print $1}' $ytie_tmp)
+  title=$(awk -F ";" '{print $2}' $ytie_tmp)
+  rm $ytie_tmp
+  unset ytie_tmp
+
+  log_debug "[ytie      ] :: result :: ($artist) ($title)"
+
+  if [ "$artist" = "" ] || [ "$title" = "" ]; then
+    log_debug "[ytie      ] :: error  :: we detected scrap! move files for investigation"
+    mv "$file" /root/plexconvert_errors/
+    log_debug "[ytie      ] :: BREAK  :: break operation on $file"
+    continue
+  fi
+
+  log_debug "[ytie      ] :: end    ::"
+}
+
+proc_mp3(){
+  log_debug "[proc_mp3  ] :: start  :: file ($file)"
+  ytie "`basename \"${file%.*}\"`"
+  id3_clear
+  id3_write
+  move_file
+  set_perm
+  refresh_plexdb
+  log_debug "[proc_mp3  ] :: end    ::"
+}
+
+id3_clear(){
+  log_debug "[id3_clear ] :: start  ::"
+  id3v2 -D "$file" > /dev/null 2>&1
+  log_debug "[id3_clear ] :: end    ::"
+}
+id3_write(){
+  log_debug "[id3_write ] :: start  ::"
+  length=0
+  album=`date +%Y-KW%W`
+  albumartist=`date +%Y-%m`
+  length=`mp3info -p %m "$file"`
+  [ $length -ge $mix_length ] && title="[MIX] $title"
+  log_debug "[id3_write ] :: par    :: album       ($album)"
+  log_debug "[id3_write ] :: par    :: albumartist ($albumartist)"
+  log_debug "[id3_write ] :: par    :: artist      ($artist)"
+  log_debug "[id3_write ] :: par    :: title       ($title)"
+  id3v2 --TALB $album --TPE2 $albumartist --TIT2 "$title" --TPE1 "$artist" "$file"
+  log_debug "[id3_clear ] :: end    ::"
+}
+
+convert(){
+  log_debug "[conv_m4a  ] :: start  ::"
+  log_debug "[conv_m4a  ] :: info   :: detected a non-mp3-file ($file)"
+  log_debug "[conv_m4a  ] :: info   :: type (`echo $file | grep -Eo '\.[^\.]*$'`)"
+  file_mp3=$(echo $file | sed "s:$jd_dl_dir:$ffmpeg_export_dir:")
+  file_mp3=$(echo $file_mp3 | sed 's/\.[^\.]*$/.mp3/')
+  log_debug "[conv_m4a  ] :: par    :: source ($file)"
+  log_debug "[conv_m4a  ] :: par    :: dest   ($file_mp3)"
+  ffmpeg -y -i "$file" -acodec libmp3lame -ab 256k "$file_mp3" > /dev/null 2>&1
+  log_debug "[conv_m4a  ] :: info   :: delete non-mp3-file"
+  rm "$file"
+  file=$file_mp3
+  log_debug "[conv_m4a  ] :: end    ::"
+  proc_mp3
+}
+
+move_file(){
+  log_debug "[move_file ] :: start  ::"
+  storage_dir="/store/0/plexconvert/$albumartist/$album"
+  log_debug "[move_file ] :: par    :: dest     ($storage_dir)"
+  log_debug "[move_file ] :: par    :: filename ($artist - $title.mp3)"
+  if [ ! -d $storage_dir ]; then
+    log_debug "[move_file ] :: mkdir  :: dest do not exist, creating ..."
+    mkdir -pm 640 $storage_dir
+  fi
+  mv "$file" "$storage_dir/$artist - $title.mp3"
+  log_debug "[move_file ] :: end    ::"
+}
+
+set_perm(){
+  log_debug "[set_perm  ] :: start  ::"
+  /root/scripts/fix_permissions p
+  log_debug "[set_perm  ] :: end    ::"
+}
+
+
+refresh_plexdb(){
+  log_debug "[ref_plex  ] :: start  ::"
+  lib_id="11"
+  log_debug "[ref_plex  ] :: par    :: lib_id ($lib_id)"
+  su plex -c "export LD_LIBRARY_PATH=/usr/lib/plexmediaserver/ && /usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -c $lib_id" > /dev/null 2>&1
+  #su plex -c "export LD_LIBRARY_PATH=/usr/lib/plexmediaserver/ && /usr/lib/plexmediaserver/Plex\ Media\ Scanner -r -c $lib_id" > /dev/null 2>&1
+  log_debug "[ref_plex  ] :: end    ::"
+}
+###
+# start
+
+# debug?
+[ $1 ] && debug=1
+
+# initial variables
+jd_root_dir="/home/jd"					# home path of jd-user
+jd_dl_dir="$jd_root_dir/loaded/plex"			# path where jd saved files
+ffmpeg_export_dir="$jd_root_dir/loaded/converted"	# path where to put converted files
+ytie_root_dir="/root/scripts/YTIE"			# path to YTIE dir
+ytie_jar="$ytie_root_dir/ExtractTitleArtist.jar"	# name of YTIE-jar-file
+ytie_model="$ytie_root_dir/model"			# path to YTIE-engine-dir
+
+mix_length=30						# value in min to decide when a song is marked as a mix
+
+IFS=''
+inotifywait -q -e CLOSE_WRITE -m --format "%w%f" --exclude "\.part$" $jd_dl_dir |
+while read file
+do
+  log_debug "[inotify   ] :: detect :: $file"
+  sleep 1
+  [ "`echo "$file" | grep -e ".mp3$"`" ] && proc_mp3 && continue || convert && continue
+done
