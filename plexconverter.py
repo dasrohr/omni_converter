@@ -1,14 +1,8 @@
 #!/usr/bin/env python
 """
-Very simple HTTP server in python.
-Usage::
-    ./dummy-web-server.py [<port>]
-Send a GET request::
-    curl http://localhost
-Send a HEAD request::
-    curl -I http://localhost
-Send a POST request::
-    curl -d "foo=bar&bin=baz" http://localhost
+simple HTTP server in embedded python
+
+proccesses GET and uses HTTP Path as video ID to kick off youtube-dl
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
@@ -26,31 +20,6 @@ class S(BaseHTTPRequestHandler):
 	video_url = 'https://youtu.be/' + videoid
 	subprocess.call(['youtube-dl', '-x', video_url])
 
-#    def do_HEAD(self):
-#        self._set_headers()
-#        
-#    def do_POST(self):
-#
-#        
-#        request_path = self.path
-#        
-#        print("\n----- Request Start ----->\n")
-#        #print(request_path)
-#        
-#        request_headers = self.headers
-#        content_length = request_headers.getheaders('content-length')
-#        length = int(content_length[0]) if content_length else 0
-#        
-#        #print(request_headers)
-#        print(self.rfile.read(length))
-#        print("<----- Request End -----\n")
-#        
-#	self.send_response(200)
-#
-#        # Doesn't do anything with posted data
-#        #self._see_headers()
-#        #self.wfile.write("<html><body><h1>POST!</h1></body></html>")
-        
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
