@@ -2,7 +2,7 @@
 """
 simple HTTP server in embedded python
 
-proccesses GET and uses HTTP Path as video ID to kick off youtube-dl
+proccesses GET and uses HTTP Path as video URL to kick off youtube-dl
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
