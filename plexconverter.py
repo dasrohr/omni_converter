@@ -16,9 +16,9 @@ class S(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self._set_headers()
-	videoid = self.path
-	video_url = 'https://youtu.be/' + videoid
-	subprocess.call(['youtube-dl', '-x', video_url])
+	passed_url = self.path
+        dl_url = passed_url[1:]
+	subprocess.Popen(['youtube-dl', '--extract-audio', '--audio-format', 'mp3', dl_url])
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
