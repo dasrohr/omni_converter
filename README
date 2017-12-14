@@ -1,8 +1,12 @@
-File/Folder		Descr
-plexconvert		the plexconvter
-YTIE			bulshit to title/artist
+File/Folder		    Descr
+plexconvert		    the plexconvter (bash)
+plexconverter.py  new plexconverter (pyhton) with build-in httpd
+YTIE			        bulshit to title/artist
 
 
 ToDo
-- add youtube-dl als dl engine to avoid jdownloader-headless
-- rewrite code to avoid vomiting
+- DONE: add youtube-dl als dl engine to avoid jdownloader-headless
+- DONE: rewrite code to avoid vomiting
+- implement YTIE in plexconverter.py
+- implement filehandling to make files available in plex with plexconverter.py
+  > problem: download is started async, so we have to find a way to determine when a DL is done to start with further processing
