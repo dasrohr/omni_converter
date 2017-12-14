@@ -17,24 +17,28 @@ class S(BaseHTTPRequestHandler):
 
     def do_GET(self):
 	# setting defaults
-	global list_switch
-        global verbose
-	list_switch = 'no'
-        verbose = ' '
+	global debug
+	debug = None
 
-	# function to enable downloads of a playlist
+	# set youtube-dl default arguments
+	args = ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '%(title)s.%(ext)s', '--no-playlist', '--quiet']
+
+	# replace the argument to download a playlist (if there is any behind the url)
         def enable_playlist_dl():
-            global list_switch
-            list_switch = 'yes'
+	    args.remove('--no-playlist')
+	    args.apped('--yes-playlist')
 
         def enable_verbose_dl():
-	    global verbose
-            print('VERBOSE AN')
-            verbose = '--verbose'
+	    global debug
+	    args.remove('--quiet')
+	    args.append('--verbose')
+	    debug = True
 
         def invalid_option():
-            print('invalid: ' + value)
+            print('invalid option passed: ' + value)
 
+	# building HTTP Header and extract path from it
+	# contains '/url::arg:arg::...'
         self._set_headers()
 	passed = self.path	# catch the passed values
         passed = passed[1:]	# cutoff leading /
@@ -44,7 +48,8 @@ class S(BaseHTTPRequestHandler):
 	url = values[0]
 	values.remove(values[0])
 
-	# build a list with options we can pass
+	# build a list with options we can pass and define the function to be executed
+	#  if the value is passed - { 'passed_value' : 'function name' }
         options = {'list' : enable_playlist_dl,
                    'debug' : enable_verbose_dl,
                   }
@@ -57,9 +62,17 @@ class S(BaseHTTPRequestHandler):
             except KeyError:
                 invalid_option()
 
-        print(values)
-        print('url: ' + url + ' - playlist-switch : ' + list_switch + ' - debug: ' + verbose)
-	subprocess.Popen(['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '"%(title)s.%(ext)s"', '--' + list_switch + '-playlist', url])
+	# append the url as the last argument to args
+	args.append(url)
+
+	if debug == True:
+	    print('catched url-options:')
+	    print(values)
+	    print('generated command:')
+	    print(args)
+
+	subprocess.Popen(args)
+	#subprocess.Popen(['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '"%(title)s.%(ext)s"', '--' + list_switch + '-playlist', url])
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
