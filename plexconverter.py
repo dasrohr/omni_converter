@@ -46,33 +46,33 @@ class S(BaseHTTPRequestHandler):
 
 	# get the url and remove from array
 	url = values[0]
-	values.remove(values[0])
-
-	# build a list with options we can pass and define the function to be executed
-	#  if the value is passed - { 'passed_value' : 'function name' }
-        options = {'list' : enable_playlist_dl,
-                   'debug' : enable_verbose_dl,
-                  }
-
-	# proccess the options
-	for value in values:
-	    # call function to set value & catch unknown options
-            try:
-                options[value]()
-            except KeyError:
-                invalid_option()
-
-	# append the url as the last argument to args
-	args.append(url)
-
-	if debug == True:
-	    print('catched url-options:')
-	    print(values)
-	    print('generated command:')
-	    print(args)
-
-	subprocess.Popen(args)
-	#subprocess.Popen(['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '"%(title)s.%(ext)s"', '--' + list_switch + '-playlist', url])
+	if url:
+	    values.remove(values[0])
+	 	   
+	    # build a list with options we can pass and define the function to be executed
+	    #  if the value is passed - { 'passed_value' : 'function name' }
+	    options = {'list' : enable_playlist_dl,
+	              'debug' : enable_verbose_dl,
+	             }
+	    
+	    # proccess the options
+	    for value in values:
+	        # call function to set value & catch unknown options
+	        try:
+	            options[value]()
+	        except KeyError:
+	            invalid_option()
+	    
+	    # append the url as the last argument to args
+	    args.append(url)
+	    
+	    if debug == True:
+	        print('catched url-options:')
+	        print(values)
+	        print('generated command:')
+	        print(args)
+	    
+	    subprocess.Popen(args)
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
