@@ -73,6 +73,8 @@ class S(BaseHTTPRequestHandler):
 	        print(args)
 	    
 	    subprocess.Popen(args)
+	else:
+	    print('received string was empty')
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
