@@ -26,7 +26,7 @@ class S(BaseHTTPRequestHandler):
 	# replace the argument to download a playlist (if there is any behind the url)
         def enable_playlist_dl():
 	    args.remove('--no-playlist')
-	    args.apped('--yes-playlist')
+	    args.append('--yes-playlist')
 
         def enable_verbose_dl():
 	    global debug
@@ -74,7 +74,7 @@ class S(BaseHTTPRequestHandler):
 	    
 	    subprocess.Popen(args)
 	else:
-	    print('received string was empty')
+	    print('empty request')
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
     server_address = ('', port)
