@@ -18,7 +18,9 @@ class S(BaseHTTPRequestHandler):
     def do_GET(self):
 	# setting defaults
 	global debug
+	global dl
 	debug = None
+	dl = True
 
 	# set youtube-dl default arguments
 	args = ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '%(title)s.%(ext)s', '--no-playlist', '--quiet']
@@ -33,6 +35,10 @@ class S(BaseHTTPRequestHandler):
 	    args.remove('--quiet')
 	    args.append('--verbose')
 	    debug = True
+
+	def disable_dl():
+	    global dl
+	    dl = None
 
         def invalid_option():
             print('invalid option passed: ' + value)
@@ -53,6 +59,7 @@ class S(BaseHTTPRequestHandler):
 	    #  if the value is passed - { 'passed_value' : 'function name' }
 	    options = {'list' : enable_playlist_dl,
 	              'debug' : enable_verbose_dl,
+		      'nodl' : disable_dl,
 	             }
 	    
 	    # proccess the options
@@ -87,7 +94,8 @@ class S(BaseHTTPRequestHandler):
 	    # HTML Output End
 
 	    # KickOff Child-Process
-	    subprocess.Popen(args)
+	    if dl:
+	        subprocess.Popen(args)
 	else:
 	    print('empty request')
 
