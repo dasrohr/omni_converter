@@ -71,7 +71,22 @@ class S(BaseHTTPRequestHandler):
 	        print(values)
 	        print('generated command:')
 	        print(args)
-	    
+
+	    # build an HTML Output
+	    self.wfile.write("<html><head></head><body><p>got link: %s</p>" % url)
+
+	    # if we have parameters passed through the url, print them
+	    if len(values) > 0:
+	        self.wfile.write("<p>Parameters: %s</p>" % values)
+
+	    # if we want to debug, print all arguments send to the child-process
+	    if debug:
+	        self.wfile.write("<br><p>Debug:</p><p>%s</p>" % args)
+
+	    self.wfile.write("</body></html>")
+	    # HTML Output End
+
+	    # KickOff Child-Process
 	    subprocess.Popen(args)
 	else:
 	    print('empty request')
