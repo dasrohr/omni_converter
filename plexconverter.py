@@ -7,6 +7,8 @@ proccesses GET and uses HTTP Path as video URL to kick off youtube-dl
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 import subprocess
+import datetime
+import os
 
 class S(BaseHTTPRequestHandler):
 
@@ -22,8 +24,19 @@ class S(BaseHTTPRequestHandler):
 	debug = None
 	dl = True
 
+	# variables to build the path to store files
+	date_week = datetime.datetime.today().strftime("%W")
+	date_year = datetime.datetime.today().strftime("%Y")
+	date_month = datetime.datetime.today().strftime("%m")
+
+	# build the path to store files
+	path = "/store/omni_convert/" + date_year + "-" + date_month + "/" + date_year + "-" + date_week
+
+	# build the option for youtibe-dl to store files where we want them includeing filename
+	dl_path = path + "/%(title)s.%(ext)s"
+
 	# set youtube-dl default arguments
-	args = ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', '%(title)s.%(ext)s', '--no-playlist', '--quiet']
+	args = ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '--output', dl_path, '--no-playlist', '--quiet']
 
 	# replace the argument to download a playlist (if there is any behind the url)
         def enable_playlist_dl():
@@ -95,6 +108,11 @@ class S(BaseHTTPRequestHandler):
 
 	    # KickOff Child-Process
 	    if dl:
+	        # create target dir if not already exist
+	       	if not os.path.exists(path):
+	       	    os.makedirs(path)
+
+		# download
 	        subprocess.Popen(args)
 	else:
 	    print('empty request')
