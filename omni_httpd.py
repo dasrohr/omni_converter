@@ -18,10 +18,13 @@ class S(BaseHTTPRequestHandler):
     def do_GET(self):
 	# building HTTP Header and extract path from it
         self._set_headers()
-	passed = self.path	# catch the passed values
-	if passed:
+	seife = self.path	# catch the passed values
+	if seife:
+		# debug
+		print(seife)
+		print(type(seife))
 		# start the celery chain
-		chain(load.s([passed]), ytie.s()).apply_async()
+		chain(load.s([seife]), ytie.s()).apply_async()
 	else:
 	    print('empty request')
 
