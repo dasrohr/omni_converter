@@ -70,6 +70,7 @@ def load(url_path):
     # WHAT HAPPENS WITH THE HOOK, WHEN WE DOWNLOAD A PLAYLIS???
 
   # process the passed url_path and extract the video-url and the options
+  print(url_path)
   url_path = url_path[1:]
   values = url_path.split('::')
   url = values[0]
