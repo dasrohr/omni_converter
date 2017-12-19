@@ -12,7 +12,7 @@ task_plex = Celery('omni_convert', backend='redis://localhost', broker='redis://
 
 ## define tasks
 # task to load a video and convert it into mp3
-@task_load.taks
+@task_load.task
 def load(url_path):
   ## define inner functions
   # youtube_dl filename-hook to get the filename from the downloader
