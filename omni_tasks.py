@@ -44,9 +44,9 @@ def load(url_path):
   date_year = datetime.datetime.today().strftime("%Y")
   date_month = datetime.datetime.today().strftime("%m")
 
-  # build path to store files in
+  # build path to store files in as unicode so that youtube-dl is not complaining
   # plex translates this to       /    albumartist                     /    album                      / title.ext
-  file_path = "/store/omni_convert/" + date_year + "-" + date_month + "/" + date_year + "-" + date_week
+  file_path = unicode("/store/omni_convert/" + date_year + "-" + date_month + "/" + date_year + "-" + date_week + '/%(title)s.%(ext)s')
 
   # define a dict with default options for youtube_dl
   #  append value to nested dict: ydl_opts['postprocessors'].append({'new_key2' : 'new_val2'})
@@ -61,7 +61,7 @@ def load(url_path):
       }],
     'progress_hooks': [ydl_filename_hook],
     'noplaylist': 'True',
-    'outtmpl': file_path + '/%(title)s.%(ext)s',
+    'outtmpl': file_path,
     'quiet': 'true',
     }
     # options for later implement when we go live
