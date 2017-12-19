@@ -72,7 +72,7 @@ def load(url_path):
   # convert passed unicode to string and
   # process the passed url_path and extract the video-url and the options
   url_path = str(url_path)
-  print(url_path)
+  type(url_path)
   url_path = url_path[1:]
   values = url_path.split('::')
   url = values[0]
