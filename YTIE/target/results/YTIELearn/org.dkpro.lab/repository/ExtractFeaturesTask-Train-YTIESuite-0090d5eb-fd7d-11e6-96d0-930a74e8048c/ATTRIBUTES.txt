@@ -1,3 +1,0 @@
-#Task properties
-#Tue Feb 28 07:13:20 CET 2017
-TcTaskType=FEATURE_EXTRACTION_TRAIN

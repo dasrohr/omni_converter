@@ -1,8 +1,0 @@
-#Mon Mar 06 15:41:22 CET 2017
-end=1488811282644
-import.input.train=task-id\://ExtractFeaturesTask-Train-YTIESuite-f761d95b-027a-11e7-b9f4-a3673d07daae/output
-uuid=CRFSuiteModelSerializationDescription-YTIESuite-f7b7254c-027a-11e7-b9f4-a3673d07daae
-type=org.dkpro.tc.ml.crfsuite.task.serialization.CRFSuiteModelSerializationDescription-YTIESuite
-begin=1488811282409
-duration=0s
-import.meta=task-id\://MetaInfoTask-YTIESuite-f729643a-027a-11e7-b9f4-a3673d07daae/meta

@@ -1,8 +1,0 @@
-#Tue Feb 28 10:49:20 CET 2017
-end=1488275360881
-uuid=ExtractFeaturesTask-Train-YTIESuite-2d45b4ec-fd9b-11e6-91fd-8139cc597355
-type=org.dkpro.tc.core.task.ExtractFeaturesTask-Train-YTIESuite
-begin=1488275360520
-import.input=task-id\://InitTask-Train-YTIESuite-2ba6d1fa-fd9b-11e6-91fd-8139cc597355/preprocessorOutputTrain
-duration=0s
-import.meta=task-id\://MetaInfoTask-YTIESuite-2d1a381b-fd9b-11e6-91fd-8139cc597355/meta

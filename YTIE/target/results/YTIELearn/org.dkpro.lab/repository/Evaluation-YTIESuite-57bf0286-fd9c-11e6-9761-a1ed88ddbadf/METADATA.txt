@@ -1,6 +1,0 @@
-#Tue Feb 28 10:57:45 CET 2017
-end=1488275865213
-uuid=Evaluation-YTIESuite-57bf0286-fd9c-11e6-9761-a1ed88ddbadf
-type=Evaluation-YTIESuite
-begin=1488275861286
-duration=3s

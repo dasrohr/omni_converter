@@ -1,3 +1,0 @@
-#Task properties
-#Tue Feb 28 10:46:29 CET 2017
-TcTaskType=MACHINE_LEARNING_ADAPTER

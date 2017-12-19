@@ -1,3 +1,0 @@
-#Task properties
-#Mon Mar 06 15:43:42 CET 2017
-TcTaskType=META

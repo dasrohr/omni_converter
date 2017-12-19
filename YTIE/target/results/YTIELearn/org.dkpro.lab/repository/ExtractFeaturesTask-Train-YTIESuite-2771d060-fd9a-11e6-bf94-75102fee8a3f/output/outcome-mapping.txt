@@ -1,4 +1,0 @@
-NOT	2
-ART	1
-TITLE	4
-RMX	3
