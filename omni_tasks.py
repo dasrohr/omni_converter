@@ -25,12 +25,12 @@ def load(url_path):
   def disable_download():
     global do_download
     do_download = None
-    ydl_opts.update({'skip_download' : 'true'})
+    ydl_options.update({'skip_download' : 'true'})
 
   # enable debug
   def enable_debug():
-    ydl_opts.pop('quiet', None)
-    ydl_opts.update({'verbose' : 'true'})
+    ydl_options.pop('quiet', None)
+    ydl_options.update({'verbose' : 'true'})
 
   # enable download of a whole playlist
   def enable_list():
