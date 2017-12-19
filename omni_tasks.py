@@ -71,7 +71,7 @@ def load(url_path):
 
   # process the passed url_path and extract the video-url and the options
   url_path = url_path[1:]
-  values = url_path.slpit('::')
+  values = url_path.split('::')
   url = values[0]
 
   # if we got a url, than remove it from the option-array
