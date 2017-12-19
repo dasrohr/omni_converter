@@ -71,20 +71,10 @@ def load(url_path):
 
   # convert passed unicode to string and
   # process the passed url_path and extract the video-url and the options
-  print(url_path)
-  print(type(url_path))
   url_path = str(url_path)
-  print(url_path)
-  print(type(url_path))
   url_path = url_path[4:-2]
-  print(url_path)
-  print(type(url_path))
   values = url_path.split('::')
-  print(values)
-  print(type(values))
   url = [values[0]]
-  print(url)
-  print(type(url))
 
   # if we got a url, than remove it from the option-array
   if url:
