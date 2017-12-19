@@ -82,7 +82,7 @@ def load(url_path):
   values = url_path.split('::')
   print(values)
   print(type(values))
-  url = values[0]
+  url = [values[0]]
   print(url)
   print(type(url))
 
