@@ -76,7 +76,7 @@ def load(url_path):
   url_path = str(url_path)
   print(url_path)
   print(type(url_path))
-  url_path = url_path[1:]
+  url_path = url_path[4:-2]
   print(url_path)
   print(type(url_path))
   values = url_path.split('::')
