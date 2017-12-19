@@ -92,7 +92,7 @@ def load(url_path):
       try:
         options[option]()
       except KeyError:
-        print('invalid option')
+        print('invalid option: ' + option)
 
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
