@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 simple HTTP server in python
-proccesses GET and uses HTTP Path as video URL to pass to a celery worker
+proccesses GET and uses HTTP Path and pass to a celery worker
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
@@ -22,13 +22,11 @@ class S(BaseHTTPRequestHandler):
     if seife:
       # start the celery chain
       chain(load.s([seife]), ytie.s()).apply_async()
-    else:
-      print('empty request')
 
 def run(server_class=HTTPServer, handler_class=S, port=8000):
   server_address = ('', port)
   httpd = server_class(server_address, handler_class)
-  print 'Starting httpd...'
+  print('Starting httpd on port ' + port)
   httpd.serve_forever()
 
 if __name__ == "__main__":
