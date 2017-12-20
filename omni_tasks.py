@@ -24,7 +24,7 @@ def load(url_path):
 
     ## modify the ydl_options
     def disable_download():
-        """ skip the download (dry-run) """
+        """ set option to skip the download (dry-run) """
         ydl_options.update({'skip_download' : 'true'})
 
     def enable_debug():
