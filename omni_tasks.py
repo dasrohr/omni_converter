@@ -23,7 +23,10 @@ def load(url_path):
         tmp_name = dl_process['filename']
         tmp_stat = dl_process['status']
         tmp_name = str(tmp_name.rsplit('.', 1)[0])
+        print tmp_name
+        print type(tmp_name)
         FILENAME[tmp_name] = str(tmp_stat)
+        print FILENAME
 
     def disable_download():
         """ set option to skip the download (dry-run) """
@@ -107,3 +110,4 @@ def ytie(filename):
     print filename
     print type(filename)
     print filename.keys()
+    print type(filename.keys()[0])
