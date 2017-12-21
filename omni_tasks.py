@@ -10,19 +10,21 @@ TASK_LOAD = Celery('omni_convert', backend='redis://localhost', broker='redis://
 TASK_YTIE = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
 TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
 
-FILENAME = None
+# declare empty dict o store Filenames in given by the Download Hook
+FILENAME = {}
 
 ## define tasks
 @TASK_LOAD.task
 def load(url_path):
     """ task to load a video and convert it into mp3 """
-    # define inner functions
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
         global FILENAME
-        FILENAME = dl_process['filename']
+        tmp_name = dl_process['filename']
+        tmp_stat = dl_process['status']
+        tmp_name = str(tmp_name.rsplit('.', 1)[0])
+        FILENAME[tmp_name] = str(tmp_stat)
 
-    ## modify the ydl_options
     def disable_download():
         """ set option to skip the download (dry-run) """
         ydl_options.update({'skip_download' : 'true'})
@@ -34,9 +36,7 @@ def load(url_path):
 
     def enable_list():
         """ enable download of a whole playlist """
-        # not sure how this behaves in terms of what the hook spits out and depending on that
-        #    how to kick-off the next tasks for all the files in the list
-        print 'we are loading a list ... normaly'
+        ydl_options.pop('noplaylist', None)
 
     ## define variables
     # current year, month and KW for path building
@@ -103,4 +103,6 @@ def load(url_path):
 @TASK_YTIE.task
 def ytie(filename):
     """ more to come ... """
-    print 'you see me rollin ... ' + filename
+    print 'you see me rollin ... '
+    print filename
+    print type(filename)
