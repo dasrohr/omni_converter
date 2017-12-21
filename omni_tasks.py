@@ -106,5 +106,5 @@ def ytie(filename):
     print 'you see me rollin ... '
     print filename
     print type(filename)
-    print str(filename.keys())
+    print str(filename.keys()[0])
     print type(filename.keys()[0])
