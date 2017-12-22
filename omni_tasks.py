@@ -191,7 +191,10 @@ def ytie(arguments):
 
 
         # move the file and set the permissions
-        os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
+        try:
+            os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
+        except OSError:
+            print 'failed to move ' + file_path + filename + '.mp3' + ' to ' + plex_path + filename_clean
         try:
             os.chown(plex_path + filename_clean, uid, gid)
         except OSError:
