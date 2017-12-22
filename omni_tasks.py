@@ -165,8 +165,9 @@ def ytie(arguments):
                 rmx = line.split(': ')[1].rstrip()
                 if rmx:
                     title = title + '(' + rmx + ')'
-            # build a list with the new filenames
+            # build a list with the new filenames to pass them later
             filename_clean = artist + " - " + title + ".mp3"
+            print filename_clean
             filenames_clean.append(filename_clean)
 
         ###
