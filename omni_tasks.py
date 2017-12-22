@@ -28,8 +28,7 @@ def load(url_path):
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
         global FILENAME
-        name = str(dl_process['filename'].rsplit('.', 1)[0])    # get the filename
-#        name = str(name.rsplit('.', 1)[0])  # cutoff the filt-ext
+        name = str(dl_process['filename'].rsplit('.', 1)[0].rsplir('/', 1)[1])    # get the filename
         if name not in FILENAME:
             FILENAME.append(str(name))  # if the filename is not already in FILENAME add it
 
@@ -51,7 +50,7 @@ def load(url_path):
         ydl_options.pop('noplaylist', None)
 
     # build path to store files in as unicode so that youtube-dl is not complaining
-    file_path_root = '/tmp/'
+    file_path_root = '/tmp/omni_convert/'
 
     # define a dict with default options for youtube_dl
     #    append value to nested dict: ydl_opts['postprocessors'].append({'new_key2' : 'new_val2'})
@@ -130,10 +129,6 @@ def ytie(arguments):
         # since we add the playlist name from the filename, we have to remove it from all filenames
         tag_albumartist = 'playlists'
         tag_album = str(filenames[0].split('_')[1]) # set the playlist name as album
-        for filename in filenames:
-            name = str(filename.split('_')[0])
-            filenames.remove(filename)
-            filenames.append(name)
     else:
         tag_albumartist = date_year + '-' + date_month
         tag_album = date_year + '-' + date_week
@@ -148,10 +143,9 @@ def ytie(arguments):
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
-        filename = str(filename.split('/')[2])
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
-                   '"' + filename + '"', shell=True, stdout=subprocess.PIPE)
+                   '"' + str(filename.split('_')[0]) + '"', shell=True, stdout=subprocess.PIPE)
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
@@ -170,7 +164,6 @@ def ytie(arguments):
 
         # build a list with the new filenames to pass them later
         filename_clean = artist + " - " + title + ".mp3"
-        filenames_clean.append(filename_clean)
 
         ###
         # MP3TAG STUFF HERE
@@ -182,25 +175,15 @@ def ytie(arguments):
             # set perminssions on dir
             try:
                 os.chown(plex_path, uid, gid)
-            except OSError:
-                print 'failed to set owner on ' + plex_path
-            try:
                 os.chmod(plex_path, 0770)
             except OSError:
-                print 'failed to set permission on ' + plex_path
-
+                print 'error while set permission on ' + plex_path
 
         # move the file and set the permissions
         try:
             os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
-        except OSError:
-            print 'failed to move ' + file_path + filename + '.mp3' + ' to ' + plex_path + filename_clean
-        try:
             os.chown(plex_path + filename_clean, uid, gid)
-        except OSError:
-            print 'failed to set owner on ' + plex_path + filename_clean
-        try:
             os.chmod(plex_path + filename_clean, 0660)
         except OSError:
-            print 'failed to set permission on ' + plex_path + filename_clean
+            print 'error while moving file or setting permissions'
         
