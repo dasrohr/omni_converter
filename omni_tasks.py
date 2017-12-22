@@ -172,11 +172,11 @@ def ytie(arguments):
             else:
                 print 'unparsed line: ' + str(line)
 
-            # build a list with the new filenames to pass them later
-            print 'artist: ' + artist + '  - title: ' + title
-            filename_clean = artist + " - " + title + ".mp3"
-            print 'filename_cleaned: ' + filename_clean
-            filenames_clean.append(filename_clean)
+        # build a list with the new filenames to pass them later
+        print 'artist: ' + artist + '  - title: ' + title
+        filename_clean = artist + " - " + title + ".mp3"
+        print 'filename_cleaned: ' + filename_clean
+        filenames_clean.append(filename_clean)
 
         ###
         # MP3TAG STUFF HERE
