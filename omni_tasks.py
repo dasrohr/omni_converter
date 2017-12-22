@@ -176,7 +176,7 @@ def ytie(arguments):
         # MP3TAG STUFF HERE
         ###
 
-        plex_path = plex_path_root + tag_albumartist + '/' + 
+        plex_path = plex_path_root + tag_albumartist + '/' + tag_album
         print 'plex_path: ' + plex_path
         if not os.path.exists(plex_path):
             os.makedirs(plex_path)
