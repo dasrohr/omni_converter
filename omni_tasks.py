@@ -185,6 +185,12 @@ def ytie(arguments):
 
         # move the file and set the permissions
         os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
-        os.chown(plex_path + filename_clean, uid, gid)
-        os.chmod(plex_path + filename_clean, 660)
+        try:
+            os.chown(plex_path + filename_clean, uid, gid)
+        except OSError:
+            print 'failed to set owner on ' + plex_path + filename_clean
+        try:
+            os.chmod(plex_path + filename_clean, 660)
+        except OSError:
+            ptint 'failed to set permission on ' + plex_path + filename_clean
         
