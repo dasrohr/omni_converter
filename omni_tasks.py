@@ -190,7 +190,7 @@ def ytie(arguments):
         except OSError:
             print 'failed to set owner on ' + plex_path + filename_clean
         try:
-            os.chmod(plex_path + filename_clean, 660)
+            os.chmod(plex_path + filename_clean, 0660)
         except OSError:
             print 'failed to set permission on ' + plex_path + filename_clean
         
