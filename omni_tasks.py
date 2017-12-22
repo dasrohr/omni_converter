@@ -145,11 +145,12 @@ def ytie(arguments):
     uid = pwd.getpwnam("plex").pw_uid
     gid = grp.getgrnam("plex").gr_gid
 
+    print 'filenames: ' + filenames
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
         ytie_cmd = subprocess.Popen('java -jar YTIE/ExtractTitleArtist.jar -use YTIE/model/ ' + \
-                   filename, shell=True, stdout=subprocess.PIPE)
+                   '"' + filename + '"', shell=True, stdout=subprocess.PIPE)
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
