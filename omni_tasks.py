@@ -177,7 +177,6 @@ def ytie(arguments):
         ###
 
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album
-        print 'plex_path: ' + plex_path
         if not os.path.exists(plex_path):
             os.makedirs(plex_path)
             # set perminssions on dir
@@ -185,9 +184,7 @@ def ytie(arguments):
             os.chmod(plex_path, 770)
 
         # move the file and set the permissions
-        print file_path + filename
-        print plex_path + filename_clean
-        os.rename(file_path + filename, plex_path + filename_clean)
+        os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
         os.chown(plex_path + filename_clean, uid, gid)
         os.chmod(plex_path + filename_clean, 660)
         
