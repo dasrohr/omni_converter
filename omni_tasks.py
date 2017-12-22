@@ -166,6 +166,9 @@ def ytie(arguments):
                 rmx = line.split(': ')[1].rstrip()
                 if rmx:
                     title = title + '(' + rmx + ')'
+            else:
+                print 'unparsed line: ' + str(line)
+                
             # build a list with the new filenames to pass them later
             print 'artist: ' + artist + '  - title: ' + title
             filename_clean = artist + " - " + title + ".mp3"
