@@ -51,7 +51,7 @@ def load(url_path):
         ydl_options.pop('noplaylist', None)
 
     # build path to store files in as unicode so that youtube-dl is not complaining
-    file_path_root = '/tmp/omni_cache/'
+    file_path_root = '/tmp/'
 
     # define a dict with default options for youtube_dl
     #    append value to nested dict: ydl_opts['postprocessors'].append({'new_key2' : 'new_val2'})
@@ -129,7 +129,7 @@ def ytie(arguments):
     if sw_list:
         # since we add the playlist name from the filename, we have to remove it from all filenames
         tag_albumartist = 'playlists'
-        tag_album = str(filenames[0].split('_')[3]) # set the playlist name as album
+        tag_album = str(filenames[0].split('_')[2]) # set the playlist name as album
         for filename in filenames:
             name = str(filename.split('_')[0])
             filenames.remove(filename)
@@ -148,7 +148,7 @@ def ytie(arguments):
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
-        filename = str(filename.split('/')[3])
+        filename = str(filename.split('/')[2])
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
                    '"' + filename + '"', shell=True, stdout=subprocess.PIPE)
