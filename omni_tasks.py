@@ -145,7 +145,6 @@ def ytie(arguments):
     uid = pwd.getpwnam("plex").pw_uid
     gid = grp.getgrnam("plex").gr_gid
 
-    print 'filenames: ' + str(filenames)
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
@@ -156,7 +155,6 @@ def ytie(arguments):
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
-            print 'line to parse: ' + str(line)
             if "Artists" in line:
                 artist = line.split(': ')[1].rstrip()
                 if not artist:
@@ -169,20 +167,17 @@ def ytie(arguments):
                 rmx = line.split(': ')[1].rstrip()
                 if rmx:
                     title = title + '(' + rmx + ')'
-            else:
-                print 'unparsed line: ' + str(line)
 
         # build a list with the new filenames to pass them later
-        print 'artist: ' + artist + '  - title: ' + title
         filename_clean = artist + " - " + title + ".mp3"
-        print 'filename_cleaned: ' + filename_clean
         filenames_clean.append(filename_clean)
 
         ###
         # MP3TAG STUFF HERE
         ###
 
-        plex_path = plex_path_root + tag_albumartist + '/' + tag_album
+        plex_path = plex_path_root + tag_albumartist + '/' + 
+        print 'plex_path: ' + plex_path
         if not os.path.exists(plex_path):
             os.makedirs(plex_path)
             # set perminssions on dir
