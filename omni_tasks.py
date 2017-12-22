@@ -149,6 +149,7 @@ def ytie(arguments):
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
+        filename = str(filename.split('/')[2])
         ytie_cmd = subprocess.Popen('java -jar YTIE/ExtractTitleArtist.jar -use YTIE/model/ ' + \
                    '"' + filename + '"', shell=True, stdout=subprocess.PIPE)
         for line in ytie_cmd.stdout:
@@ -168,7 +169,7 @@ def ytie(arguments):
                     title = title + '(' + rmx + ')'
             else:
                 print 'unparsed line: ' + str(line)
-                
+
             # build a list with the new filenames to pass them later
             print 'artist: ' + artist + '  - title: ' + title
             filename_clean = artist + " - " + title + ".mp3"
