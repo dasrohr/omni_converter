@@ -184,7 +184,7 @@ def ytie(arguments):
             os.chmod(plex_path, 770)
 
         # move the file and set the permissions
-        os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
+        os.rename(file_path + filename + '.mp3', plex_path + '/' + filename_clean)
         os.chown(plex_path + filename_clean, uid, gid)
         os.chmod(plex_path + filename_clean, 660)
         
