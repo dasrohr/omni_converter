@@ -192,5 +192,5 @@ def ytie(arguments):
         try:
             os.chmod(plex_path + filename_clean, 660)
         except OSError:
-            ptint 'failed to set permission on ' + plex_path + filename_clean
+            print 'failed to set permission on ' + plex_path + filename_clean
         
