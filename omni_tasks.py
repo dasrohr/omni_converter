@@ -145,7 +145,7 @@ def ytie(arguments):
     uid = pwd.getpwnam("plex").pw_uid
     gid = grp.getgrnam("plex").gr_gid
 
-    print 'filenames: ' + filenames
+    print 'filenames: ' + str(filenames)
     # create a list for the filenames which has been cleaned by YTIE
     filenames_clean = []
     for filename in filenames:
