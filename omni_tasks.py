@@ -150,15 +150,22 @@ def ytie(arguments):
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
             if "Artists" in line:
-                artist = line.split(': ')[1].rstrip()
-                if not artist:
+                try:
+                    artist = line.split(': ')[1].rstrip()
+                except IndexError:
                     artist = 'Unknown Artist'
+                    
             elif "Title" in line:
-                title = line.split(': ')[1].rstrip()
-                if not title:
+                try:
+                    title = line.split(': ')[1].rstrip()
+                except IndexError:
                     title = 'Unknown Title'
+                   
             elif "Remix" in line:
-                rmx = line.split(': ')[1].rstrip()
+                try:
+                    rmx = line.split(': ')[1].rstrip()
+                except IndexError:
+                    rmx = False
                 if rmx:
                     title = title + '(' + rmx + ')'
 
