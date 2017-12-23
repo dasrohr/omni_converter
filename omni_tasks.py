@@ -7,6 +7,7 @@ import pwd
 import grp
 from celery import Celery
 import youtube_dl
+import eyed3
 
 # create celery tasks and define communication channels - we are just using simple redis
 TASK_LOAD = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
@@ -142,7 +143,6 @@ def ytie(arguments):
     gid = grp.getgrnam("plex").gr_gid
 
     # create a list for the filenames which has been cleaned by YTIE
-    filenames_clean = []
     for filename in filenames:
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
@@ -152,30 +152,34 @@ def ytie(arguments):
             #  so that we do not end in empty filenames/tags
             if "Artists" in line:
                 try:
-                    artist = line.split(': ')[1].rstrip()
+                    tag_artist = line.split(': ')[1].rstrip()
                 except IndexError:
-                    artist = 'Unknown Artist'
+                    tag_artist = 'Unknown Artist'
                     
             elif "Title" in line:
                 try:
-                    title = line.split(': ')[1].rstrip()
+                    tag_title = line.split(': ')[1].rstrip()
                 except IndexError:
-                    title = 'Unknown Title'
+                    tag_title = 'Unknown Title'
                    
             elif "Remix" in line:
                 try:
-                    rmx = line.split(': ')[1].rstrip()
+                    tag_rmx = line.split(': ')[1].rstrip()
                 except IndexError:
-                    rmx = False
-                if rmx:
-                    title = title + '(' + rmx + ')'
+                    tag_rmx = False
+                if tag_rmx:
+                    tag_title = tag_title + '(' + tag_rmx + ')'
 
         # build a list with the new filenames to pass them later
         filename_clean = artist + " - " + title + ".mp3"
 
-        ###
-        # MP3TAG STUFF HERE
-        ###
+        # set the mp3Tags
+        audiofile = eyed3.load(file_path + filename + ".mp3")
+        audiofile.tag.artist = unicode(tag_artist)
+        audiofile.tag.title = unicode(tag_title)
+        audiofile.tag.album = uncode(tag_album)
+        audiofile.tag.album_artist = unicode(tag_album_artist)
+        audiofile.tag.save()
 
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
         if not os.path.exists(plex_path):
