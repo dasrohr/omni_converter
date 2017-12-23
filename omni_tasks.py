@@ -14,18 +14,17 @@ TASK_LOAD = Celery('omni_convert', backend='redis://localhost', broker='redis://
 TASK_YTIE = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
 TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
 
-# declare global variables
-# declare empty dict o store Filenames in given by the Download Hook
-FILENAME = []
-# switch to activate/deactivate playlist download (default = False)
-SW_LIST = False
-# default filename pattern used by ydl
-FILE_NAME_PATTERN = '%(title)s.%(ext)s'
-
 ## define tasks
 @TASK_LOAD.task
 def load(url_path):
     """ task to load a video and convert it into mp3 """
+    # declare global variables
+    # declare empty dict o store Filenames in given by the Download Hook
+    FILENAME = []
+    # switch to activate/deactivate playlist download (default = False)
+    SW_LIST = False
+    # default filename pattern used by ydl
+    FILE_NAME_PATTERN = '%(title)s.%(ext)s'
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
         global FILENAME
