@@ -128,6 +128,7 @@ def ytie(arguments):
     if sw_list:
         # since we add the playlist name from the filename, we have to remove it from all filenames
         tag_albumartist = 'playlists'
+        print filenames[0]
         tag_album = str(filenames[0].split('_')[1]) # set the playlist name as album
     else:
         tag_albumartist = date_year + '-' + date_month
