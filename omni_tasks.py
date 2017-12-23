@@ -27,7 +27,7 @@ def load(url_path):
     FILE_NAME_PATTERN = '%(title)s.%(ext)s'
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
-        global FILENAME
+        #global FILENAME
         name = str(dl_process['filename'].rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
         if name not in FILENAME:
             FILENAME.append(str(name))  # if the filename is not already in FILENAME add it
@@ -43,8 +43,8 @@ def load(url_path):
 
     def enable_list():
         """ enable download of a whole playlist """
-        global SW_LIST
-        global FILE_NAME_PATTERN
+        #global SW_LIST
+        #global FILE_NAME_PATTERN
         SW_LIST = True
         FILE_NAME_PATTERN = '%(title)s_%(playlist_title)s.%(ext)s'
         ydl_options.pop('noplaylist', None)
