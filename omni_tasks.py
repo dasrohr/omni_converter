@@ -171,7 +171,7 @@ def ytie(arguments):
                     tag_title = tag_title + '(' + tag_rmx + ')'
 
         # build a list with the new filenames to pass them later
-        filename_clean = artist + " - " + title + ".mp3"
+        filename_clean = tag_artist + " - " + tag_title + ".mp3"
 
         # set the mp3Tags
         audiofile = eyed3.load(file_path + filename + ".mp3")
