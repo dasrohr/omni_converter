@@ -20,17 +20,17 @@ def load(url_path):
     """ task to load a video and convert it into mp3 """
     # declare global variables
     # declare empty dict o store Filenames in given by the Download Hook
-    FILENAME = []
+    filename = []
     # switch to activate/deactivate playlist download (default = False)
-    SW_LIST = False
+    sw_list = False
     # default filename pattern used by ydl
-    FILE_NAME_PATTERN = '%(title)s.%(ext)s'
+    file_name_pattern = '%(title)s.%(ext)s'
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
-        #global FILENAME
+        #global filename
         name = str(dl_process['filename'].rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
-        if name not in FILENAME:
-            FILENAME.append(str(name))  # if the filename is not already in FILENAME add it
+        if name not in filename:
+            filename.append(str(name))  # if the filename is not already in filename add it
 
     def disable_download():
         """ set option to skip the download (dry-run) """
@@ -43,10 +43,10 @@ def load(url_path):
 
     def enable_list():
         """ enable download of a whole playlist """
-        #global SW_LIST
-        #global FILE_NAME_PATTERN
-        SW_LIST = True
-        FILE_NAME_PATTERN = '%(title)s_%(playlist_title)s.%(ext)s'
+        #global sw_list
+        #global file_name_pattern
+        sw_list = True
+        file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
         ydl_options.pop('noplaylist', None)
 
     # build path to store files in as unicode so that youtube-dl is not complaining
@@ -93,7 +93,7 @@ def load(url_path):
                 print 'invalid option: ' + option
 
         # build thefilename pattern and path we store the files at ...
-        file_path = unicode(file_path_root + FILE_NAME_PATTERN)
+        file_path = unicode(file_path_root + file_name_pattern)
         # ... and add it to our ydl_options
         ydl_options.update({'outtmpl' : file_path})
 
@@ -105,7 +105,7 @@ def load(url_path):
         print 'we received no url'
 
     # build our tuple to pass it to the next task
-    arguments = (FILENAME, file_path_root, SW_LIST)
+    arguments = (filename, file_path_root, sw_list)
     # return the tuple
     return arguments
 
@@ -154,13 +154,13 @@ def ytie(arguments):
                     tag_artist = line.split(': ')[1].rstrip()
                 except IndexError:
                     tag_artist = 'Unknown Artist'
-                    
+
             elif "Title" in line:
                 try:
                     tag_title = line.split(': ')[1].rstrip()
                 except IndexError:
                     tag_title = 'Unknown Title'
-                   
+
             elif "Remix" in line:
                 try:
                     tag_rmx = line.split(': ')[1].rstrip()
