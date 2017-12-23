@@ -32,23 +32,6 @@ def load(url_path):
         if name not in filename:
             filename.append(str(name))  # if the filename is not already in filename add it
 
-    def disable_download():
-        """ set option to skip the download (dry-run) """
-        ydl_options.update({'skip_download' : 'true'})
-
-    def enable_debug():
-        """ enable debug """
-        ydl_options.pop('quiet', None)
-        ydl_options.update({'verbose' : 'true'})
-
-    def enable_list():
-        """ enable download of a whole playlist """
-        #global sw_list
-        #global file_name_pattern
-        sw_list = True
-        file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
-        ydl_options.pop('noplaylist', None)
-
     # build path to store files in as unicode so that youtube-dl is not complaining
     file_path_root = '/tmp/omni_convert/'
 
@@ -79,17 +62,21 @@ def load(url_path):
     if url:
         values.remove(values[0])
 
-        # build a dict with options we can process to change the download behaviour
-        #   if the value is passed - { 'passed_value' : 'function name' }
-        options = {'nodl': disable_download,
-                   'debug': enable_debug,
-                   'list': enable_list,
-                  }
-        # process the passed options, if there are some and they are valid
+        # process the options if there are any
         for option in values:
-            try:
-                options[option]()
-            except KeyError:
+            if option == 'nodl':
+                # set option to skip the download (dry-run)
+                ydl_options.update({'skip_download' : 'true'})
+            elif option == 'list':
+                # enable download of a whole playlist
+                sw_list = True
+                file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
+                ydl_options.pop('noplaylist', None)
+            elif option == 'debug':
+                # enable debug
+                ydl_options.pop('quiet', None)
+                ydl_options.update({'verbose' : 'true'})
+            else:
                 print 'invalid option: ' + option
 
         # build thefilename pattern and path we store the files at ...
@@ -114,6 +101,10 @@ def load(url_path):
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
+
+    # DEBUG
+    print arguments
+
     # return the tuple
     return arguments
 
