@@ -97,6 +97,14 @@ def load(url_path):
         # ... and add it to our ydl_options
         ydl_options.update({'outtmpl' : file_path})
 
+        # DEBUG
+        print ydl_options
+        print str(file_name_pattern)
+        print filename
+        print url
+        print sw_list
+        print values
+
         # download
         with youtube_dl.YoutubeDL(ydl_options) as ydl:
             ydl.download(url)
