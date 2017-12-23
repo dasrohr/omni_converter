@@ -177,7 +177,7 @@ def ytie(arguments):
         audiofile = eyed3.load(file_path + filename + ".mp3")
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
-        audiofile.tag.album = uncode(tag_album)
+        audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_album_artist)
         audiofile.tag.save()
 
