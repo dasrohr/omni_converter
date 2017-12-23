@@ -178,7 +178,7 @@ def ytie(arguments):
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
-        audiofile.tag.album_artist = unicode(tag_album_artist)
+        audiofile.tag.album_artist = unicode(tag_albumartist)
         audiofile.tag.save()
 
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
