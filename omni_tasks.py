@@ -31,9 +31,8 @@ def load(url_path):
 
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
-        #global filename
+        if debug: print 'DEBUG :: dl_hook-filename\t{}'.format(dl_process['filename'])
         name = str(dl_process['filename'].rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
-        if debug: print 'DEBUG :: dl_hook-filename\t{}'.format(name)
         if name not in filename:
             filename.append(str(name))  # if the filename is not already in filename add it
 
