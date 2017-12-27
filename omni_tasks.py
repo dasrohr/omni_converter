@@ -33,10 +33,10 @@ def load(url_path):
         """ youtube_dl filename-hook to get the filename from the downloader """
         tmp = dl_process['filename']
         print tmp
-        name = str(str(dl_process['filename']).rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
-        if name not in filename:
-            filename.append(str(name))  # if the filename is not already in filename add it
-            print filename
+        # name = str(str(dl_process['filename']).rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
+        #if name not in filename:
+        #    filename.append(str(name))  # if the filename is not already in filename add it
+        #    print filename
 
     # build path to store files in as unicode so that youtube-dl is not complaining
     file_path_root = '/tmp/omni_convert/'
