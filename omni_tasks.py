@@ -18,13 +18,16 @@ TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://
 @TASK_LOAD.task
 def load(url_path):
     """ task to load a video and convert it into mp3 """
-    # declare global variables
+    # declare defaults for global variables
     # declare empty dict o store Filenames in given by the Download Hook
     filename = []
     # switch to activate/deactivate playlist download (default = False)
     sw_list = False
     # default filename pattern used by ydl
     file_name_pattern = '%(title)s.%(ext)s'
+    # default setting for debuging (false)
+    debug = False
+
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
         #global filename
@@ -51,11 +54,9 @@ def load(url_path):
         'quiet': 'true',
         }
 
-    # debug
-    print 'raw url_path: ' + str(url_path)
-
     # extract the url and options from url_path
     #   (url_path is a list with one entry which is a unicode)
+    url_path_raw = url_path
     url_path = str(url_path)
     url_path = url_path[4:-2]
     values = url_path.split('::')
@@ -73,32 +74,25 @@ def load(url_path):
             ydl_options.pop('noplaylist', None)
         elif option == 'debug':
             # enable debug
+            debug = True
             ydl_options.pop('quiet', None)
             ydl_options.update({'verbose' : 'true'})
         else:
-            print 'invalid option: ' + option
+            print 'ERROR :: invalid option:\t{}'.format(option)
 
     # build thefilename pattern and path we store the files at ...
     file_path = unicode(file_path_root + file_name_pattern)
     # ... and add it to our ydl_options
     ydl_options.update({'outtmpl' : file_path})
-    # DEBUG
-    print ydl_options
-    print str(file_name_pattern)
-    print filename
-    print url
-    print sw_list
-    print values
+    if debug: print 'DEBUG :: raw url_path:\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path_raw, url, values, sw_list, ydl_options)
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
-        print 'url: ' + str(url) + ' -- url_path: ' + str(url_path)
         ydl.download(url)
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
 
-    # DEBUG
-    print arguments
+    if debug: print 'DEBUG :: task results\t{}'.format(arguments)
 
     # return the tuple
     return arguments
