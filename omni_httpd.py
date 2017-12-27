@@ -13,11 +13,15 @@ class Server(BaseHTTPRequestHandler):
         # if url is valid, 200 OK
         if is_url:
             self.send_response(200)
+            print '200'
         # else 400 Bad Request
         else:
             self.send_response(400)
+            print '400'
         self.send_header('Content-type', 'text/html')
+        print 'header send'
         self.end_headers()
+        print 'header end'
 
     def do_GET(self):
         """ define the GET handler """
@@ -26,11 +30,14 @@ class Server(BaseHTTPRequestHandler):
         print seife
         # extract url and options from it
         values = seife[1:].split('::')
+        print values
         # validate if url is a valid url
         is_url = True
         if not validators.url(values[0]):
             is_url = False
 
+        print is_url
+        
         # build the header
         self._set_headers(is_url)
 
