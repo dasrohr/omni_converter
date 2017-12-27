@@ -31,12 +31,11 @@ def load(url_path):
 
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
-        tmp = dl_process['filename']
-        print tmp
+        name = dl_process['filename']
         # name = str(str(dl_process['filename']).rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
-        #if name not in filename:
+        if name not in filename:
+            filename.append(name)
         #    filename.append(str(name))  # if the filename is not already in filename add it
-        #    print filename
 
     # build path to store files in as unicode so that youtube-dl is not complaining
     file_path_root = '/tmp/omni_convert/'
