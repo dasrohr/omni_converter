@@ -56,12 +56,8 @@ def load(url_path):
 
     # extract the url and options from url_path
     #   (url_path is a list with one entry which is a unicode)
-    url_path_raw = url_path
-    url_path = str(url_path)
-    url_path = url_path[4:-2]
-    values = url_path.split('::')
-    url = [values[0]]
-    values.remove(values[0])
+    url = [str(url_path)[1:].split('::')[0]]
+    values = [str(url_path)[1:].split('::')[1:]]
     # process the options if there are any
     for option in values:
         if option == 'nodl':
@@ -84,13 +80,13 @@ def load(url_path):
     file_path = unicode(file_path_root + file_name_pattern)
     # ... and add it to our ydl_options
     ydl_options.update({'outtmpl' : file_path})
-    if debug: print 'DEBUG :: raw url_path:\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path_raw, url, values, sw_list, ydl_options)
+    if debug: print 'DEBUG :: urlpath:\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
         ydl.download(url)
 
     # build our tuple to pass it to the next task
-    arguments = (filename, file_path_root, sw_list)
+    arguments = (filename, file_path_root, sw_list, debug)
 
     if debug: print 'DEBUG :: task results\t{}'.format(arguments)
 
@@ -106,10 +102,11 @@ def ytie(arguments):
     them to the right position
     """
     import subprocess
-    print 'you see me rollin ... '
 
     # collect our arguments
-    filenames, file_path, sw_list = arguments
+    filenames, file_path, sw_list, debug = arguments
+
+    if debug: print 'DEBUG :: files\t{}\npath\t{}\nlistsw\t{}'.format(filenames, file_path, sw_list)
 
     # current year, month and KW for path and tag building
     date_week = datetime.datetime.today().strftime("%W")
