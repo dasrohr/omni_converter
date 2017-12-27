@@ -69,7 +69,7 @@ def load(url_path):
         elif option == 'list':
             # enable download of a whole playlist
             sw_list = True
-            file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
+            file_name_pattern = '%(title)s__%(playlist_title)s.%(ext)s'
             ydl_options.pop('noplaylist', None)
         elif option == 'debug':
             # enable debug
@@ -120,7 +120,9 @@ def ytie(arguments):
     if sw_list:
         # since we add the playlist name from the filename, we have to remove it from all filenames
         tag_albumartist = 'playlists'
-        tag_album = str(filenames[0].split('_')[1]) # set the playlist name as album
+        if isinstance(filenames[0], unicode):
+            filenames[0] = unidecode(filenames[0])
+        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
     else:
         tag_albumartist = date_year + '-' + date_month
         tag_album = date_year + '-' + date_week
@@ -134,27 +136,30 @@ def ytie(arguments):
 
     # create a list for the filenames which has been cleaned by YTIE
     for filename in filenames:
-        # get rid of unicode characters if we have any
-        if isinstance(filename, unicode): filename = unidecode(filename)
+        # get rid of unicode characters if we have any and rename the loaded file
+        if isinstance(filename, unicode):
+            unifree_filename = unidecode(filename)
+            os.rename(file_path + filename + '.mp3', file_path + unifree_filename + '.mp3')
+            filename = unifree_filename
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
-                   '"' + filename.split('_')[0] + '"', shell=True, stdout=subprocess.PIPE)
+                   '"' + filename.split('__')[0] + '"', shell=True, stdout=subprocess.PIPE)
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
-            if unicode('Artists') in line:
+            if 'Artists' in line:
                 try:
                     tag_artist = line.split(': ')[1].rstrip()
                 except IndexError:
                     tag_artist = 'Unknown Artist'
 
-            elif "Title" in line:
+            elif 'Title' in line:
                 try:
                     tag_title = line.split(': ')[1].rstrip()
                 except IndexError:
                     tag_title = 'Unknown Title'
 
-            elif "Remix" in line:
+            elif 'Remix' in line:
                 try:
                     tag_rmx = line.split(': ')[1].rstrip()
                 except IndexError:
@@ -163,8 +168,17 @@ def ytie(arguments):
                     tag_title = tag_title + '(' + tag_rmx + ')'
 
         # build a list with the new filenames to pass them later
-        filename_clean = tag_artist + " - " + tag_title + ".mp3"
+        filename_clean = tag_artist + ' - ' + tag_title + '.mp3'
 
+        # set the mp3Tags
+        audiofile = eyed3.load(file_path + filename + '.mp3')
+        audiofile.tag.artist = unicode(tag_artist)
+        audiofile.tag.title = unicode(tag_title)
+        audiofile.tag.album = unicode(tag_album)
+        audiofile.tag.album_artist = unicode(tag_albumartist)
+        audiofile.tag.save()
+
+        # build path to plex library and create if not exist
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
         if not os.path.exists(plex_path):
             os.makedirs(plex_path)
@@ -182,11 +196,3 @@ def ytie(arguments):
             os.chmod(plex_path + filename_clean, 0660)
         except OSError:
             print 'ERROR :: error while moving file or setting permissions'
-
-        # set the mp3Tags
-        audiofile = eyed3.load(plex_path + filename_clean)
-        audiofile.tag.artist = unicode(tag_artist)
-        audiofile.tag.title = unicode(tag_title)
-        audiofile.tag.album = unicode(tag_album)
-        audiofile.tag.album_artist = unicode(tag_albumartist)
-        audiofile.tag.save()
