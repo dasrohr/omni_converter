@@ -26,9 +26,8 @@ class Server(BaseHTTPRequestHandler):
         # extract url and options from it
         values = seife[1:].split('::')
         # validate if url is a valid url
-        if validators.url(values[0]):
-            is_url = True
-        else:
+        is_url = True
+        if not validators.url(values[0]):
             is_url = False
 
         # build the header
