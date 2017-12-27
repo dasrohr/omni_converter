@@ -55,10 +55,10 @@ def load(url_path):
     print 'raw url_path: ' + str(url_path)
 
     # extract the url and options from url_path (url_path is a list with one entry which is a unicode)
-    # how: make a string from the unicode-list, remove leading '/' with [1:] and \
-    #       split at every '::' to generate a list
-    #        after that values contains a list with [0] as the url and [1,2,...] as passed options
-    values = str(url_path[0])[1:].split('::')
+    url_path = str(url_path)
+    url_path = url_path[4:-2]
+    values = url_path.split('::')
+    url = [values[0]]
     # process the options if there are any
     for option in values:
         if option == 'nodl':
@@ -90,7 +90,7 @@ def load(url_path):
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
         print 'url: ' + str(values[0]) + ' -- url_path: ' + str(url_path)
-        ydl.download(values[0])
+        ydl.download(list(values[0])
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
