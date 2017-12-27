@@ -2,9 +2,9 @@
 """ simple HTTP server in python
 proccesses GET and uses HTTP Path and pass to a celery worker """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+import validators
 from celery import chain
 from omni_tasks import load, ytie
-import validators
 
 class Server(BaseHTTPRequestHandler):
     """ define the http-handlers """
