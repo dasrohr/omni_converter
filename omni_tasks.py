@@ -80,7 +80,7 @@ def load(url_path):
     file_path = unicode(file_path_root + file_name_pattern)
     # ... and add it to our ydl_options
     ydl_options.update({'outtmpl' : file_path})
-    if debug: print 'DEBUG :: urlpath:\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
+    if debug: print 'DEBUG ::\nurlpath\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
         ydl.download(url)
@@ -106,7 +106,7 @@ def ytie(arguments):
     # collect our arguments
     filenames, file_path, sw_list, debug = arguments
 
-    if debug: print 'DEBUG :: files\t{}\npath\t{}\nlistsw\t{}'.format(filenames, file_path, sw_list)
+    if debug: print 'DEBUG ::\nfiles\t{}\npath\t{}\nlistsw\t{}'.format(filenames, file_path, sw_list)
 
     # current year, month and KW for path and tag building
     date_week = datetime.datetime.today().strftime("%W")
