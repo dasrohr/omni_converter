@@ -91,7 +91,7 @@ def load(url_path):
     print values
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
-        print 'url: ' + url + ' -- url_path: ' + str(url_path)
+        print 'url: ' + str(url) + ' -- url_path: ' + str(url_path)
         ydl.download(url)
 
     # build our tuple to pass it to the next task
