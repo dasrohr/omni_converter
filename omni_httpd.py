@@ -9,7 +9,7 @@ from omni_tasks import load, ytie
 class Server(BaseHTTPRequestHandler):
     """ define the http-handlers """
     def _set_headers(self, is_url):
-        """ build http-200 response """
+        """ build and send http response """
         # if url is valid, 200 OK
         if is_url:
             self.send_response(200)
@@ -23,6 +23,7 @@ class Server(BaseHTTPRequestHandler):
         """ define the GET handler """
         # get the url-path
         seife = self.path
+        print seifes
         # extract url and options from it
         values = seife[1:].split('::')
         # validate if url is a valid url
