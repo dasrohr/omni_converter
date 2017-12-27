@@ -57,7 +57,7 @@ def load(url_path):
     # extract the url and options from url_path
     #   (url_path is a list with one entry which is a unicode)
     url = [str(url_path)[1:].split('::')[0]]
-    values = [str(url_path)[1:].split('::')[1:]]
+    values = str(url_path)[1:].split('::')[1:]
     # process the options if there are any
     for option in values:
         if option == 'nodl':
