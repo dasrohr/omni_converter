@@ -165,14 +165,6 @@ def ytie(arguments):
         # build a list with the new filenames to pass them later
         filename_clean = tag_artist + " - " + tag_title + ".mp3"
 
-        # set the mp3Tags
-        audiofile = eyed3.load(file_path + filename + ".mp3")
-        audiofile.tag.artist = unicode(tag_artist)
-        audiofile.tag.title = unicode(tag_title)
-        audiofile.tag.album = unicode(tag_album)
-        audiofile.tag.album_artist = unicode(tag_albumartist)
-        audiofile.tag.save()
-
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
         if not os.path.exists(plex_path):
             os.makedirs(plex_path)
@@ -190,4 +182,11 @@ def ytie(arguments):
             os.chmod(plex_path + filename_clean, 0660)
         except OSError:
             print 'ERROR :: error while moving file or setting permissions'
-        
+
+        # set the mp3Tags
+        audiofile = eyed3.load(plex_path + filename_clean)
+        audiofile.tag.artist = unicode(tag_artist)
+        audiofile.tag.title = unicode(tag_title)
+        audiofile.tag.album = unicode(tag_album)
+        audiofile.tag.album_artist = unicode(tag_albumartist)
+        audiofile.tag.save()
