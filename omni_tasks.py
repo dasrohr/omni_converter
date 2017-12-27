@@ -15,7 +15,7 @@ TASK_YTIE = Celery('omni_convert', backend='redis://localhost', broker='redis://
 TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
 
 ## define tasks
-@TASK_LOAD.task(bind=True)
+@TASK_LOAD.task
 def load(self, url_path):
     """ task to load a video and convert it into mp3 """
     # declare global variables
@@ -100,8 +100,6 @@ def load(self, url_path):
 
     else:
         print 'we received no url'
-        self.request.callbacks = None
-        return
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
