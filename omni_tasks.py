@@ -100,7 +100,11 @@ def load(url_path):
 # task to perform the YTIE filename-cleanup
 @TASK_YTIE.task
 def ytie(arguments):
-    """ more to come ... """
+    """
+    this defines a task which uses the list of filenames from the previous task
+    and performs YTIE operations on it, renames the files acordingly and moves
+    them to the right position
+    """
     import subprocess
     print 'you see me rollin ... '
 
