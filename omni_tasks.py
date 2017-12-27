@@ -84,6 +84,7 @@ def load(url_path):
     # ... and add it to our ydl_options
     ydl_options.update({'outtmpl' : file_path})
     if debug: print 'DEBUG ::\nurlpath\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
+    print 'DEBUG ::\nurlpath\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
         ydl.download(url)
