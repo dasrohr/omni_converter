@@ -135,7 +135,7 @@ def ytie(arguments):
     for filename in filenames:
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
-                   '"' + str(filename.split('_')[0]) + '"', shell=True, stdout=subprocess.PIPE)
+                   '"' + filename.split('_')[0] + '"', shell=True, stdout=subprocess.PIPE)
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
