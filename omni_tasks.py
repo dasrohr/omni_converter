@@ -94,8 +94,8 @@ def load(self, url_path):
 
         # download
         with youtube_dl.YoutubeDL(ydl_options) as ydl:
-                print 'url(' + str(url) + ') url_path (' + str(url_path) + ')'
-                ydl.download(url)
+            print 'url(' + str(url) + ') url_path (' + str(url_path) + ')'
+            ydl.download(url)
 
 
     else:
