@@ -51,7 +51,3 @@ if __name__ == "__main__":
         run(port=int(argv[1]))
     else:
         run()
-
-
-else:
-    print 'we received no url or url is invalid -- DEBUG: url(' + str(url) + ') url_path (' + str(url_path) + ')'
