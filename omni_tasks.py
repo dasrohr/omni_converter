@@ -94,7 +94,11 @@ def load(url_path):
 
         # download
         with youtube_dl.YoutubeDL(ydl_options) as ydl:
-            ydl.download(url)
+            try:
+                ydl.download(url)
+            except DownloadError:
+                print 'Error while Downloading'
+                print str('url(' + url + ') url_path (' + url_path + ')')
 
     else:
         print 'we received no url'
