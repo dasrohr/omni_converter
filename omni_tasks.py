@@ -6,6 +6,7 @@ import os
 import pwd
 import grp
 from celery import Celery
+from __future__ import unicode_literals
 import youtube_dl
 import eyed3
 
