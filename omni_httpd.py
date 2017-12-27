@@ -23,7 +23,7 @@ class Server(BaseHTTPRequestHandler):
         """ define the GET handler """
         # get the url-path
         seife = self.path
-        print seifes
+        print seife
         # extract url and options from it
         values = seife[1:].split('::')
         # validate if url is a valid url
