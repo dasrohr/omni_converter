@@ -52,6 +52,9 @@ def load(url_path):
         'quiet': 'true',
         }
 
+    # debug
+    print 'raw url_path: ' + str(url_path)
+
     # convert passed unicode to string and
     # process the passed url_path and extract the video-url and the options
     url_path = str(url_path)
@@ -95,7 +98,7 @@ def load(url_path):
 
         # download
         with youtube_dl.YoutubeDL(ydl_options) as ydl:
-            print 'url(' + str(url) + ') url_path (' + str(url_path) + ')'
+            print 'url: ' + str(url) + ' -- url_path: ' + str(url_path)
             ydl.download(url)
 
     else:
