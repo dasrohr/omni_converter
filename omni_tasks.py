@@ -54,7 +54,8 @@ def load(url_path):
     # debug
     print 'raw url_path: ' + str(url_path)
 
-    # extract the url and options from url_path (url_path is a list with one entry which is a unicode)
+    # extract the url and options from url_path
+    #   (url_path is a list with one entry which is a unicode)
     url_path = str(url_path)
     url_path = url_path[4:-2]
     values = url_path.split('::')
