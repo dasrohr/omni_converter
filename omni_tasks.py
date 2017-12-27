@@ -139,7 +139,7 @@ def ytie(arguments):
         for line in ytie_cmd.stdout:
             # parse the YTIE output and catch the cases where YTIE fails to detect things,
             #  so that we do not end in empty filenames/tags
-            if u'Artists' in line:
+            if unicode('Artists') in line:
                 try:
                     tag_artist = line.split(': ')[1].rstrip()
                 except IndexError:
