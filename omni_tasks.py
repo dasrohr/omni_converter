@@ -99,7 +99,7 @@ def load(url_path):
             ydl.download(url)
 
     else:
-        print 'we received no url'
+        print 'we received no url or url is invalid -- DEBUG: url(' + str(url) + ') url_path (' + str(url_path) + ')'
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
