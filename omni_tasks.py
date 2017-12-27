@@ -16,7 +16,7 @@ TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://
 
 ## define tasks
 @TASK_LOAD.task
-def load(self, url_path):
+def load(url_path):
     """ task to load a video and convert it into mp3 """
     # declare global variables
     # declare empty dict o store Filenames in given by the Download Hook
