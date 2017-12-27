@@ -6,6 +6,7 @@ import datetime
 import os
 import pwd
 import grp
+from unidecode import unidecode
 from celery import Celery
 import youtube_dl
 import eyed3
@@ -133,6 +134,8 @@ def ytie(arguments):
 
     # create a list for the filenames which has been cleaned by YTIE
     for filename in filenames:
+        # get rid of unicode characters if we have any
+        if isinstance(filename, unicode): filename = unidecode(filename)
         ytie_cmd = subprocess.Popen('java -jar /opt/omni_converter/YTIE/ExtractTitleArtist.jar \
                    -use /opt/omni_converter/YTIE/model/ ' + \
                    '"' + filename.split('_')[0] + '"', shell=True, stdout=subprocess.PIPE)
