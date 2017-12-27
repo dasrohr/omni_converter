@@ -4,21 +4,37 @@ proccesses GET and uses HTTP Path and pass to a celery worker """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from celery import chain
 from omni_tasks import load, ytie
+import validators
 
 class Server(BaseHTTPRequestHandler):
     """ define the http-handlers """
-    def _set_headers(self):
+    def _set_headers(self, is_url):
         """ build http-200 response """
-        self.send_response(200)
+        # if url is valid, 200 OK
+        if is_url:
+            self.send_response(200)
+        # else 400 Bad Request
+        else:
+            self.send_response(400)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_GET(self):
         """ define the GET handler """
-        # building HTTP Header and extract path from it
-        self._set_headers()
-        seife = self.path	# passing the seife
-        if seife:
+        # get the url-path
+        seife = self.path
+        # extract url and options from it
+        values = seife[1:].split('::')
+        # validate if url is a valid url
+        if validators.url(values[0]):
+            is_url = True
+        else:
+            is_url = False
+
+        # build the header
+        self._set_headers(is_url)
+
+        if is_url:
             # start the celery chain
             chain(load.s([seife]), ytie.s()).apply_async()
 
@@ -35,3 +51,7 @@ if __name__ == "__main__":
         run(port=int(argv[1]))
     else:
         run()
+
+
+else:
+    print 'we received no url or url is invalid -- DEBUG: url(' + str(url) + ') url_path (' + str(url_path) + ')'
