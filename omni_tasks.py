@@ -8,7 +8,6 @@ import grp
 from celery import Celery
 import youtube_dl
 import eyed3
-import validators
 
 # create celery tasks and define communication channels - we are just using simple redis
 TASK_LOAD = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
@@ -55,54 +54,43 @@ def load(url_path):
     # debug
     print 'raw url_path: ' + str(url_path)
 
-    # convert passed unicode to string and
-    # process the passed url_path and extract the video-url and the options
-    url_path = str(url_path)
-    url_path = url_path[4:-2]
-    values = url_path.split('::')
-    url = [values[0]]
+    # extract the url and options from url_path (url_path is a list with one entry which is a unicode)
+    # how: make a string from the unicode-list, remove leading '/' with [1:] and \
+    #       split at every '::' to generate a list
+    #        after that values contains a list with [0] as the url and [1,2,...] as passed options
+    values = str(url_path[0])[1:].split('::')
+    # process the options if there are any
+    for option in values:
+        if option == 'nodl':
+            # set option to skip the download (dry-run)
+            ydl_options.update({'skip_download' : 'true'})
+        elif option == 'list':
+            # enable download of a whole playlist
+            sw_list = True
+            file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
+            ydl_options.pop('noplaylist', None)
+        elif option == 'debug':
+            # enable debug
+            ydl_options.pop('quiet', None)
+            ydl_options.update({'verbose' : 'true'})
+        else:
+            print 'invalid option: ' + option
 
-    # if we got a url, than remove it from the option-list (values[])
-    if validators.url(url[0]):
-        values.remove(values[0])
-
-        # process the options if there are any
-        for option in values:
-            if option == 'nodl':
-                # set option to skip the download (dry-run)
-                ydl_options.update({'skip_download' : 'true'})
-            elif option == 'list':
-                # enable download of a whole playlist
-                sw_list = True
-                file_name_pattern = '%(title)s_%(playlist_title)s.%(ext)s'
-                ydl_options.pop('noplaylist', None)
-            elif option == 'debug':
-                # enable debug
-                ydl_options.pop('quiet', None)
-                ydl_options.update({'verbose' : 'true'})
-            else:
-                print 'invalid option: ' + option
-
-        # build thefilename pattern and path we store the files at ...
-        file_path = unicode(file_path_root + file_name_pattern)
-        # ... and add it to our ydl_options
-        ydl_options.update({'outtmpl' : file_path})
-
-        # DEBUG
-        print ydl_options
-        print str(file_name_pattern)
-        print filename
-        print url
-        print sw_list
-        print values
-
-        # download
-        with youtube_dl.YoutubeDL(ydl_options) as ydl:
-            print 'url: ' + str(url) + ' -- url_path: ' + str(url_path)
-            ydl.download(url)
-
-    else:
-        print 'we received no url or url is invalid -- DEBUG: url(' + str(url) + ') url_path (' + str(url_path) + ')'
+    # build thefilename pattern and path we store the files at ...
+    file_path = unicode(file_path_root + file_name_pattern)
+    # ... and add it to our ydl_options
+    ydl_options.update({'outtmpl' : file_path})
+    # DEBUG
+    print ydl_options
+    print str(file_name_pattern)
+    print filename
+    print values[0]
+    print sw_list
+    print values
+    # download
+    with youtube_dl.YoutubeDL(ydl_options) as ydl:
+        print 'url: ' + str(values[0]) + ' -- url_path: ' + str(url_path)
+        ydl.download(values[0])
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
