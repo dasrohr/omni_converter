@@ -60,7 +60,7 @@ def load(url_path):
     url = [values[0]]
 
     # if we got a url, than remove it from the option-list (values[])
-    if validators.url(str(url[0]):
+    if validators.url(url[0]):
         values.remove(values[0])
 
         # process the options if there are any
