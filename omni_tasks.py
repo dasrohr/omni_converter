@@ -8,6 +8,7 @@ import grp
 from celery import Celery
 import youtube_dl
 import eyed3
+import validators
 
 # create celery tasks and define communication channels - we are just using simple redis
 TASK_LOAD = Celery('omni_convert', backend='redis://localhost', broker='redis://localhost')
@@ -59,7 +60,7 @@ def load(url_path):
     url = [values[0]]
 
     # if we got a url, than remove it from the option-list (values[])
-    if url[0] != '':
+    if validators.url(str(url[0]):
         values.remove(values[0])
 
         # process the options if there are any
@@ -96,7 +97,6 @@ def load(url_path):
         with youtube_dl.YoutubeDL(ydl_options) as ydl:
             print 'url(' + str(url) + ') url_path (' + str(url_path) + ')'
             ydl.download(url)
-
 
     else:
         print 'we received no url'
