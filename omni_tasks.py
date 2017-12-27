@@ -59,6 +59,7 @@ def load(url_path):
     url_path = url_path[4:-2]
     values = url_path.split('::')
     url = [values[0]]
+    values.remove(values[0])
     # process the options if there are any
     for option in values:
         if option == 'nodl':
@@ -84,13 +85,13 @@ def load(url_path):
     print ydl_options
     print str(file_name_pattern)
     print filename
-    print values[0]
+    print url
     print sw_list
     print values
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
-        print 'url: ' + str(values[0]) + ' -- url_path: ' + str(url_path)
-        ydl.download(list(values[0])
+        print 'url: ' + url + ' -- url_path: ' + str(url_path)
+        ydl.download(url)
 
     # build our tuple to pass it to the next task
     arguments = (filename, file_path_root, sw_list)
