@@ -12,11 +12,9 @@ class Server(BaseHTTPRequestHandler):
         """ build and send http response """
         # if url is valid, 200 OK
         if is_url:
-            self.wfile.write("<p>200</p>")
             self.send_response(200)
         # else 400 Bad Request
         else:
-            self.wfile.write("<p>400</p>")
             self.send_response(400)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -32,11 +30,13 @@ class Server(BaseHTTPRequestHandler):
         if not validators.url(values[0]):
             is_url = False
 
-        self.wfile.write("<html><body>")
-
         # build the header
         self._set_headers(is_url)
-
+        self.wfile.write("<html><body>")
+        if is_url:
+            self.wfile.write("<p>200</p>")
+        else:
+            self.wfile.write("<p>400</p>")
         self.wfile.write("<p>%s</p></body></html>" % seife)
 
         if is_url:
