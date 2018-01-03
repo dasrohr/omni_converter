@@ -20,31 +20,26 @@ TASK_PLEX = Celery('omni_convert', backend='redis://localhost', broker='redis://
 @TASK_LOAD.task
 def load(url_path):
     """ task to load a video and convert it into mp3 """
-    # declare defaults for global variables
-    # declare empty dict o store Filenames in given by the Download Hook
+    # declare defaults
+    # declare empty dict o store Filenames in from the Download Hook
     filename = []
-    # switch to activate/deactivate playlist download (default = False)
+    # switch to activate/deactivate playlist download (False)
     sw_list = False
-    # default filename pattern used by ydl
+    # default filename pattern used by ydl (videotitle.ext)
     file_name_pattern = '%(title)s.%(ext)s'
-    # default setting for debuging (false)
+    # default setting for debuging (False)
     debug = False
 
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
         name = dl_process['filename'].rsplit('.', 1)[0].rsplit('/', 1)[1]
-        # name = str(str(dl_process['filename']).rsplit('.', 1)[0].rsplit('/', 1)[1])    # get the filename
         if name not in filename:
             filename.append(name)
-        #    filename.append(str(name))  # if the filename is not already in filename add it
 
     # build path to store files in as unicode so that youtube-dl is not complaining
     file_path_root = '/tmp/omni_convert/'
 
-    # define a dict with default options for youtube_dl
-    #    append value to nested dict: ydl_opts['postprocessors'].append({'new_key2' : 'new_val2'})
-    #    append value to dict:        ydl_opts.update({'new_key2' : 'new_val2'})
-    #    remove value from dict:      ydl_opts.pop('key_12', None)
+    # define a dict with options for youtube_dl
     ydl_options = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -118,8 +113,9 @@ def ytie(arguments):
 
     # build mp3-tags
     if sw_list:
-        # since we add the playlist name from the filename, we have to remove it from all filenames
+        # if we are loading a list, we get the name of it from the filename and define it as mp3tag: album
         tag_albumartist = 'playlists'
+        # remove unicode characters from video title if there are any
         if isinstance(filenames[0], unicode):
             filenames[0] = unidecode(filenames[0])
         tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
@@ -167,11 +163,13 @@ def ytie(arguments):
                 if tag_rmx:
                     tag_title = tag_title + '(' + tag_rmx + ')'
 
-        # build a list with the new filenames to pass them later
-        filename_clean = tag_artist + ' - ' + tag_title + '.mp3'
+        # build the old filename for easier reference
+        file_old = file_path + filename + '.mp3'
 
         # set the mp3Tags
-        audiofile = eyed3.load(file_path + filename + '.mp3')
+        audiofile = eyed3.load(file_old)
+        if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
+            tag_album = tag_album + ' [MIX]'
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
@@ -180,7 +178,11 @@ def ytie(arguments):
 
         # build path to plex library and create if not exist
         plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
+        # build the new file name for easier reference
+        file_new = plex_path + tag_artist + ' - ' + tag_title + '.mp3'
+
         if not os.path.exists(plex_path):
+            if debug: print 'DEBUG :: create new plex-dir {}'.format(plex_path)
             os.makedirs(plex_path)
             # set perminssions on dir
             try:
@@ -189,10 +191,11 @@ def ytie(arguments):
             except OSError:
                 print 'ERROR :: error while set permission on {}'.format(plex_path)
 
+        if debug: print 'DEBUG :: moving file\t{} -->> {}'.format(file_old, file_new)
         # move the file and set the permissions
         try:
-            os.rename(file_path + filename + '.mp3', plex_path + filename_clean)
-            os.chown(plex_path + filename_clean, uid, gid)
-            os.chmod(plex_path + filename_clean, 0660)
+            os.rename(file_old, file_new)
+            os.chown(file_new, uid, gid)
+            os.chmod(file_new, 0660)
         except OSError:
             print 'ERROR :: error while moving file or setting permissions'
