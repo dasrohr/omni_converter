@@ -8,6 +8,9 @@ import pwd
 import grp
 from unidecode import unidecode
 from celery import Celery
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 import youtube_dl
 import eyed3
 
@@ -166,14 +169,54 @@ def ytie(arguments):
         # build the old filename for easier reference
         file_old = file_path + filename + '.mp3'
 
+        ## album cover generator
+        # generate text for album cover
+        cover_text = tag_album
+        text_length = len(cover_text)
+        text_max_length = 20
+        # if text is longer than text_max_length, then strip it
+        if text_length >= text_max_length:
+            cover_text = cover_text[:text_max_length]
+            text_length = len(cover_text)
+        # if last char is space, strip it off
+        if cover_text[-1] == ' ':
+            cover_text = cover_text[:-1]
+            text_length = len(cover_text)
+
+        # build the name of the cover-jpg and check if it already exists. Skip if true
+        album_cover = 'res/cover' + cover_text + '.jpg'
+
+        # create album cover, if it dos not already exists
+        if not os.path.exists(album_cover):
+            # open image
+            cover = Image.open('res/black.jpg')
+            # get size of our template image
+            image_x, image_y = cover.size
+            # enable drawing
+            draw = ImageDraw.Draw(cover)
+            # calc the font size depending on the image size and ammount of characters
+            font_size = (2 * image_y) / text_length
+            # calc the y_offset for the text, depending on the font size
+            text_offset = (image_x - font_size) / 2
+            # set font type and size
+            font = ImageFont.truetype("UbuntuMono-B.ttf", font_size)
+            # be picasso
+            draw.text((0, text_offset), cover_text, (255, 255, 255), font=font)
+            # save image
+            cover.save(album_cover)
+
         # set the mp3Tags
         audiofile = eyed3.load(file_old)
         if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
             tag_album = tag_album + ' [MIX]'
+
+        audiofile.tag.clear()
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_albumartist)
+        imagedata = open(album_cover, "rb").read()
+        audiofile.tag.images.set(3, imagedata, "image/jpeg")    # set cover image
         audiofile.tag.save()
 
         # build path to plex library and create if not exist
