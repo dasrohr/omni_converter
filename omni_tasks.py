@@ -206,6 +206,9 @@ def ytie(arguments):
             cover.save(album_cover)
         elif debug:
             font_size = 'not calculated'
+            image_x = 'not calculated'
+            image_y = 'not calculated'
+            text_offset = 'not calculated'
 
         # set the mp3Tags
         audiofile = eyed3.load(file_old)
