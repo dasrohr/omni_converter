@@ -184,7 +184,7 @@ def ytie(arguments):
             text_length = len(cover_text)
 
         # build the name of the cover-jpg and check if it already exists. Skip if true
-        album_cover = 'res/cover' + cover_text + '.jpg'
+        album_cover = 'res/cover_' + cover_text + '.jpg'
 
         # create album cover, if it dos not already exists
         if not os.path.exists(album_cover):
@@ -210,13 +210,17 @@ def ytie(arguments):
         if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
             tag_album = tag_album + ' [MIX]'
 
+        if debug: print 'DEBUG ::\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album artist:\t{}\ntrack len:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\n\
+                        cover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, audiofile.info.time_secs,\
+                        album_cover, cover_text, text_length, font_size, image_x, image_y, text_offset)
+
         audiofile.tag.clear()
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_albumartist)
-        imagedata = open(album_cover, "rb").read()
-        audiofile.tag.images.set(3, imagedata, "image/jpeg")    # set cover image
+        cover_data = open(album_cover, "rb").read()
+        audiofile.tag.images.set(3, cover_data, "image/jpeg")    # set cover image
         audiofile.tag.save()
 
         # build path to plex library and create if not exist
