@@ -199,7 +199,7 @@ def ytie(arguments):
             # calc the y_offset for the text, depending on the font size
             text_offset = (image_x - font_size) / 2
             # set font type and size
-            font = ImageFont.truetype("UbuntuMono-B.ttf", font_size)
+            font = ImageFont.truetype("DejaVuSansMono.ttf", font_size)
             # be picasso
             draw.text((0, text_offset), cover_text, (255, 255, 255), font=font)
             # save image
