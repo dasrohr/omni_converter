@@ -204,6 +204,8 @@ def ytie(arguments):
             draw.text((0, text_offset), cover_text, (255, 255, 255), font=font)
             # save image
             cover.save(album_cover)
+        elif debug:
+            font_size = 'not calculated'
 
         # set the mp3Tags
         audiofile = eyed3.load(file_old)
