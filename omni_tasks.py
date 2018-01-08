@@ -169,6 +169,24 @@ def ytie(arguments):
         # build the old filename for easier reference
         file_old = file_path + filename + '.mp3'
 
+        # build paths to plex library for easier reference
+        plex_path_artist = plex_path_root + tag_albumartist + '/'
+        plex_path = plex_path_artist + tag_album + '/'
+
+        # create plex folders if not exist
+        if not os.path.exists(plex_path):
+            if debug: print 'DEBUG :: create new plex-dir {}'.format(plex_path)
+            os.makedirs(plex_path)
+            # set perminssions on dir
+            try:
+                os.chown(plex_path, uid, gid)
+                os.chmod(plex_path, 0770)
+            except OSError:
+                print 'ERROR :: error while set permission on {}'.format(plex_path)
+
+        # build the new file name for easier reference
+        file_new = plex_path + tag_artist + ' - ' + tag_title + '.mp3'
+
         ## ALBUM cover generator
         # generate text for album cover
         cover_album_text = tag_album
@@ -184,7 +202,7 @@ def ytie(arguments):
             text_length = len(cover_album_text)
 
         # build the name of the cover-jpg and check if it already exists. Skip if true
-        album_cover = 'res/cover_alb_' + cover_album_text + '.jpg'
+        album_cover = plex_path + 'poster.jpg'
 
         # create album cover, if it dos not already exists
         if not os.path.exists(album_cover):
@@ -227,7 +245,7 @@ def ytie(arguments):
             text_length = len(cover_artist_text)
 
         # build the name of the cover-jpg and check if it already exists. Skip if true
-        artist_cover = 'res/cover_art_' + cover_artist_text + '.jpg'
+        artist_cover = plex_path_artist + 'poster.jpg'
 
         # create artist cover, if it dos not already exists
         if not os.path.exists(artist_cover):
@@ -261,30 +279,12 @@ def ytie(arguments):
             if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
             tag_album = tag_album + ' [MIX]'
 
+        audiofile.tag.clear()
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_albumartist)
-        cover_album_data = open(album_cover, "rb").read()
-#        cover_artist_data = open(artist_cover, "rb").read()
-        audiofile.tag.images.set(3, cover_album_data, "image/jpeg")    # set album cover
-#        audiofile.tag.images.set(11, cover_artist_data, "image/jpeg")    # set artist cover
         audiofile.tag.save()
-
-        # build path to plex library and create if not exist
-        plex_path = plex_path_root + tag_albumartist + '/' + tag_album + '/'
-        # build the new file name for easier reference
-        file_new = plex_path + tag_artist + ' - ' + tag_title + '.mp3'
-
-        if not os.path.exists(plex_path):
-            if debug: print 'DEBUG :: create new plex-dir {}'.format(plex_path)
-            os.makedirs(plex_path)
-            # set perminssions on dir
-            try:
-                os.chown(plex_path, uid, gid)
-                os.chmod(plex_path, 0770)
-            except OSError:
-                print 'ERROR :: error while set permission on {}'.format(plex_path)
 
         if debug: print 'DEBUG :: moving file\t{} -->> {}'.format(file_old, file_new)
         # move the file and set the permissions
