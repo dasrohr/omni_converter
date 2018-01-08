@@ -169,22 +169,22 @@ def ytie(arguments):
         # build the old filename for easier reference
         file_old = file_path + filename + '.mp3'
 
-        ## album cover generator
+        ## ALBUM cover generator
         # generate text for album cover
-        cover_text = tag_album
-        text_length = len(cover_text)
+        cover_album_text = tag_album
+        text_length = len(cover_album_text)
         text_max_length = 20
         # if text is longer than text_max_length, then strip it
         if text_length >= text_max_length:
-            cover_text = cover_text[:text_max_length]
-            text_length = len(cover_text)
+            cover_album_text = cover_album_text[:text_max_length]
+            text_length = len(cover_album_text)
         # if last char is space, strip it off
-        if cover_text[-1] == ' ':
-            cover_text = cover_text[:-1]
-            text_length = len(cover_text)
+        if cover_album_text[-1] == ' ':
+            cover_album_text = cover_album_text[:-1]
+            text_length = len(cover_album_text)
 
         # build the name of the cover-jpg and check if it already exists. Skip if true
-        album_cover = 'res/cover_' + cover_text + '.jpg'
+        album_cover = 'res/cover_alb_' + cover_album_text + '.jpg'
 
         # create album cover, if it dos not already exists
         if not os.path.exists(album_cover):
@@ -201,7 +201,7 @@ def ytie(arguments):
             # set font type and size
             font = ImageFont.truetype("UbuntuMono-B.ttf", font_size)
             # be picasso
-            draw.text((0, text_offset), cover_text, (255, 255, 255), font=font)
+            draw.text((0, text_offset), cover_album_text, (255, 255, 255), font=font)
             # save image
             cover.save(album_cover)
         elif debug:
@@ -210,19 +210,65 @@ def ytie(arguments):
             image_y = 'not calculated'
             text_offset = 'not calculated'
 
+        if debug: print 'DEBUG ::\nALBUM-Cover\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album art.:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\ncover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset y:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, album_cover, cover_album_text, text_length, font_size, image_x, image_y, text_offset)
+
+
+        ## ARTIST cover generator
+        # generate text for artist cover
+        cover_artist_text = tag_artist
+        text_length = len(cover_artist_text)
+        # if text is longer than text_max_length, then strip it
+        if text_length >= text_max_length:
+            cover_artist_text = cover_artist_text[:text_max_length]
+            text_length = len(cover_artist_text)
+        # if last char is space, strip it off
+        if cover_artist_text[-1] == ' ':
+            cover_artist_text = cover_artist_text[:-1]
+            text_length = len(cover_artist_text)
+
+        # build the name of the cover-jpg and check if it already exists. Skip if true
+        artist_cover = 'res/cover_art_' + cover_artist_text + '.jpg'
+
+        # create artist cover, if it dos not already exists
+        if not os.path.exists(artist_cover):
+            # open image
+            cover = Image.open('res/black.jpg')
+            # get size of our template image
+            image_x, image_y = cover.size
+            # enable drawing
+            draw = ImageDraw.Draw(cover)
+            # calc the font size depending on the image size and ammount of characters
+            font_size = (2 * image_y) / text_length
+            # calc the y_offset for the text, depending on the font size
+            text_offset = (image_x - font_size) / 2
+            # set font type and size
+            font = ImageFont.truetype("UbuntuMono-B.ttf", font_size)
+            # be picasso
+            draw.text((0, text_offset), cover_artist_text, (255, 255, 255), font=font)
+            # save image
+            cover.save(artist_cover)
+        elif debug:
+            font_size = 'not calculated'
+            image_x = 'not calculated'
+            image_y = 'not calculated'
+            text_offset = 'not calculated'
+
+        if debug: print 'DEBUG ::\nARTIST-Cover\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album art.:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\ncover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset y:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, artist_cover, cover_artist_text, text_length, font_size, image_x, image_y, text_offset)
+
         # set the mp3Tags
         audiofile = eyed3.load(file_old)
         if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
+            if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
             tag_album = tag_album + ' [MIX]'
-
-        if debug: print 'DEBUG ::\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album art.:\t{}\ntrack len:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\ncover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, audiofile.info.time_secs, album_cover, cover_text, text_length, font_size, image_x, image_y, text_offset)
 
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_albumartist)
-        cover_data = open(album_cover, "rb").read()
-        audiofile.tag.images.set(3, cover_data, "image/jpeg")    # set cover image
+        cover_album_data = open(album_cover, "rb").read()
+        cover_artist_data = open(artist_cover, "rb").read()
+        audiofile.tag.images.set(3, cover_album_data, "image/jpeg")    # set album cover
+        audiofile.tag.images.set(8, cover_artist_data, "image/jpeg")    # set artist cover
         audiofile.tag.save()
 
         # build path to plex library and create if not exist
