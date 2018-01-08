@@ -1,8 +1,7 @@
-File/Folder		    Descr
-plexconvert		    the plexconvter (bash)
-plexconverter.py  new plexconverter (pyhton) with build-in httpd
-YTIE			        bulshit to title/artist
-
-
+ 	omni_tasks.py  -> defines worker for Celery Queues
+ 	omni_httpd.py  -> spwans a httpd and performs basic url-check
+  res/           -> contains ressources for cover-generation
+  ytie/          -> java app - parses string and creates usefull 'artist - title' conventions (written by dderjoel)
+  
 ToDo
  - See Projects @ GIT
