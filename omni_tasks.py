@@ -279,7 +279,6 @@ def ytie(arguments):
             if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
             tag_album = tag_album + ' [MIX]'
 
-        audiofile.tag.clear()
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
