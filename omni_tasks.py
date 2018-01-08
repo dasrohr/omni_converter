@@ -169,6 +169,18 @@ def ytie(arguments):
         # build the old filename for easier reference
         file_old = file_path + filename + '.mp3'
 
+        # open file, decide if we load a MIX or not, depending on the track length and write mp3-tags
+        audiofile = eyed3.load(file_old)
+        if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
+            if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
+            tag_album = tag_album + ' [MIX]'
+
+        audiofile.tag.artist = unicode(tag_artist)
+        audiofile.tag.title = unicode(tag_title)
+        audiofile.tag.album = unicode(tag_album)
+        audiofile.tag.album_artist = unicode(tag_albumartist)
+        audiofile.tag.save()
+
         # build paths to plex library for easier reference
         plex_path_artist = plex_path_root + tag_albumartist + '/'
         plex_path = plex_path_artist + tag_album + '/'
@@ -272,18 +284,6 @@ def ytie(arguments):
             text_offset = 'not calculated'
 
         if debug: print 'DEBUG ::\nARTIST-Cover\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album art.:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\ncover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset y:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, artist_cover, cover_artist_text, text_length, font_size, image_x, image_y, text_offset)
-
-        # set the mp3Tags
-        audiofile = eyed3.load(file_old)
-        if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
-            if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
-            tag_album = tag_album + ' [MIX]'
-
-        audiofile.tag.artist = unicode(tag_artist)
-        audiofile.tag.title = unicode(tag_title)
-        audiofile.tag.album = unicode(tag_album)
-        audiofile.tag.album_artist = unicode(tag_albumartist)
-        audiofile.tag.save()
 
         if debug: print 'DEBUG :: moving file\t{} -->> {}'.format(file_old, file_new)
         # move the file and set the permissions
