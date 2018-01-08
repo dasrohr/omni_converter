@@ -199,7 +199,7 @@ def ytie(arguments):
             # calc the y_offset for the text, depending on the font size
             text_offset = (image_x - font_size) / 2
             # set font type and size
-            font = ImageFont.truetype("DejaVuSansMono.ttf", font_size)
+            font = ImageFont.truetype("UbuntuMono-B.ttf", font_size)
             # be picasso
             draw.text((0, text_offset), cover_text, (255, 255, 255), font=font)
             # save image
@@ -215,11 +215,8 @@ def ytie(arguments):
         if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
             tag_album = tag_album + ' [MIX]'
 
-        if debug: print 'DEBUG ::\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album artist:\t{}\ntrack len:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\n\
-                        cover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, audiofile.info.time_secs,\
-                        album_cover, cover_text, text_length, font_size, image_x, image_y, text_offset)
+        if debug: print 'DEBUG ::\ntag artist:\t{}\ntag title:\t{}\ntag album:\t{}\ntag album art.:\t{}\ntrack len:\t{}\nfile cover:\t{}\ncover text:\t{}\ncover text len:\t{}\ncover text size:\t{}\ncover size x:\t{}\ncover size y:\t{}\ncover offset:\t{}\n'.format(tag_artist, tag_title, tag_album, tag_albumartist, audiofile.info.time_secs, album_cover, cover_text, text_length, font_size, image_x, image_y, text_offset)
 
-        audiofile.tag.clear()
         audiofile.tag.artist = unicode(tag_artist)
         audiofile.tag.title = unicode(tag_title)
         audiofile.tag.album = unicode(tag_album)
