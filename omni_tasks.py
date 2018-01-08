@@ -266,9 +266,9 @@ def ytie(arguments):
         audiofile.tag.album = unicode(tag_album)
         audiofile.tag.album_artist = unicode(tag_albumartist)
         cover_album_data = open(album_cover, "rb").read()
-        cover_artist_data = open(artist_cover, "rb").read()
+#        cover_artist_data = open(artist_cover, "rb").read()
         audiofile.tag.images.set(3, cover_album_data, "image/jpeg")    # set album cover
-        audiofile.tag.images.set(11 , cover_artist_data, "image/jpeg")    # set artist cover
+#        audiofile.tag.images.set(11, cover_artist_data, "image/jpeg")    # set artist cover
         audiofile.tag.save()
 
         # build path to plex library and create if not exist
