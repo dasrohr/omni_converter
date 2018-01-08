@@ -215,7 +215,7 @@ def ytie(arguments):
 
         ## ARTIST cover generator
         # generate text for artist cover
-        cover_artist_text = tag_artist
+        cover_artist_text = tag_albumartist
         text_length = len(cover_artist_text)
         # if text is longer than text_max_length, then strip it
         if text_length >= text_max_length:
