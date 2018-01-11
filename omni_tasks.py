@@ -4,8 +4,10 @@
 from __future__ import unicode_literals
 import datetime
 import os
+import re
 import pwd
 import grp
+from difflib import get_close_matches
 from unidecode import unidecode
 from celery import Celery
 from PIL import Image
@@ -32,6 +34,10 @@ def load(url_path):
     file_name_pattern = '%(title)s.%(ext)s'
     # default setting for debuging (False)
     debug = False
+    # set the folder to a default (False)
+    folder = False
+    # set the folder security switch to a deafult (False)
+    sw_new_folder = False
 
     def ydl_filename_hook(dl_process):
         """ youtube_dl filename-hook to get the filename from the downloader """
@@ -59,11 +65,20 @@ def load(url_path):
     #   (url_path is a list with one entry which is a unicode)
     url = [str(url_path[0])[1:].split('::')[0]]
     values = str(url_path[0])[1:].split('::')[1:]
+    # compile regex-pattern to detect folder-option
+    regex_folder = re.compile('folder==.*')
+
     # process the options if there are any
     for option in values:
         if option == 'nodl':
             # set option to skip the download (dry-run)
             ydl_options.update({'skip_download' : 'true'})
+        elif regex_folder.match(option):
+            # set the plex-folder we want to store in later
+            # this value gets passed to the ytie task, it is not used in this task
+            folder = option.split['='][1]
+        elif option == 'new':
+            sw_new_folder = True
         elif option == 'list':
             # enable download of a whole playlist
             sw_list = True
@@ -81,13 +96,13 @@ def load(url_path):
     file_path = unicode(file_path_root + file_name_pattern)
     # ... and add it to our ydl_options
     ydl_options.update({'outtmpl' : file_path})
-    if debug: print 'DEBUG ::\nurlpath\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, ydl_options)
+    if debug: print 'DEBUG ::\nurlpath\t{}\nurl\t{}\noptions\t{}\nlistsw\t{}\nfolder\t{}\nnew folder\t{}\nydl_opt\t{}'.format(url_path, url, values, sw_list, folder, sw_new_folder, ydl_options)
     # download
     with youtube_dl.YoutubeDL(ydl_options) as ydl:
         ydl.download(url)
 
     # build our tuple to pass it to the next task
-    arguments = (filename, file_path_root, sw_list, debug)
+    arguments = (filename, file_path_root, sw_list, debug, folder)
 
     if debug: print 'DEBUG :: task results\t{}'.format(arguments)
 
@@ -105,26 +120,14 @@ def ytie(arguments):
     import subprocess
 
     # collect our arguments
-    filenames, file_path, sw_list, debug = arguments
+    filenames, file_path, sw_list, debug, folder, sw_new_folder = arguments
 
-    if debug: print 'DEBUG ::\nfiles\t{}\npath\t{}\nlistsw\t{}'.format(filenames, file_path, sw_list)
+    if debug: print 'DEBUG ::\nfiles\t{}\npath\t{}\nlistsw\t{}\nfolder\t{}\nnew folder\t{}'.format(filenames, file_path, sw_list, folder, sw_new_folder)
 
     # current year, month and KW for path and tag building
     date_week = datetime.datetime.today().strftime("%W")
     date_year = datetime.datetime.today().strftime("%Y")
     date_month = datetime.datetime.today().strftime("%m")
-
-    # build mp3-tags
-    if sw_list:
-        # if we are loading a list, we get the name of it from the filename and define it as mp3tag: album
-        tag_albumartist = 'playlists'
-        # remove unicode characters from video title if there are any
-        if isinstance(filenames[0], unicode):
-            filenames[0] = unidecode(filenames[0])
-        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
-    else:
-        tag_albumartist = date_year + '-' + date_month
-        tag_album = date_year + '-' + date_week
 
     # define the root path where plex stores the files
     plex_path_root = '/store/omni_convert/'
@@ -132,6 +135,33 @@ def ytie(arguments):
     # get uid and gid of user 'plex'
     uid = pwd.getpwnam("plex").pw_uid
     gid = grp.getgrnam("plex").gr_gid
+
+    # build mp3-tags
+    if folder:
+        # if we got passed a foldername, it is used as albumartist, so that the paths got build correctly to store and it gets created if it doe not exists
+        #  - if the switch sw_new_folder == True, then we just using the passed string as foldername
+        #  - if the switch sw_new_folder == Fasle, then we do a check on the existing folders and find the closed match and use the match as foldername/albumartist
+        #      so it is ensured that typos are not passed any further and we end up in a messy folder structure on the fs and plex
+        #      modify cutoff= value to set how close foldername has to match an existing one (lower means less equality) - default = 0.6
+        if sw_new_folder:
+            tag_albumartist = folder
+        else:
+            folders = os.listdir(plex_path_root)
+            matching_folder = get_close_matches(folder, folders, n=1, cutoff=0.2)
+            if not matching_folder:
+                tag_albumartist = 'drunken idiots'
+    else:
+        tag_albumartist = date_year + '-' + date_month
+        tag_album = date_year + '-' + date_week
+
+    if sw_list:
+        # if we load a playlist, use the list name as album ...
+        if isinstance(filenames[0], unicode):
+            filenames[0] = unidecode(filenames[0])
+        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
+    else:
+        # ... else generate the default album name (year-week)
+        tag_album = date_year + '-' + date_week
 
     # create a list for the filenames which has been cleaned by YTIE
     for filename in filenames:
@@ -171,7 +201,8 @@ def ytie(arguments):
 
         # open file, decide if we load a MIX or not, depending on the track length and write mp3-tags
         audiofile = eyed3.load(file_old)
-        if not sw_list and audiofile.info.time_secs >= 1200:    # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
+        if not sw_list and audiofile.info.time_secs >= 1200:
+            # if we are not loading a list and the song is longer than 20min, mark the album with ' [MIX]'
             if debug: print 'DEBUG :: Track length: {}'.format(audiofile.info.time_secs)
             tag_album = tag_album + ' [MIX]'
 
