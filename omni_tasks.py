@@ -120,15 +120,6 @@ def ytie(arguments):
     """
     import subprocess
 
-    def folder_match (switch, string):
-            folders = os.listdir(plex_path_root)
-            get_close_matches(string, folders, n=1, cutoff=0.2)
-            folders = os.listdir(plex_path_root + albumartist)
-            get_close_matches(string, folders, n=1, cutoff=0.2)
-
-        return get_close_matches(string, folders, n=1, cutoff=0.2)
-
-
     # collect our arguments
     filenames, file_path, sw_list, debug, folder, sw_new_folder = arguments
 
@@ -167,7 +158,7 @@ def ytie(arguments):
                 tag_albumartist = 'drunk idiot'
 
             else:
-                tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + albumartist), n=1, cutoff=0.2)
+                tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + tag_albumartist), n=1, cutoff=0.2)
                 if not tag_album:
                     tag_album = 'go home'
 
