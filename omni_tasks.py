@@ -66,7 +66,7 @@ def load(url_path):
     url = [str(url_path[0])[1:].split('::')[0]]
     values = str(url_path[0])[1:].split('::')[1:]
     # compile regex-pattern to detect folder-option
-    regex_folder = re.compile('folder=.*')
+    regex_folder = re.compile('folder==.*')
 
     # process the options if there are any
     for option in values:
@@ -76,7 +76,7 @@ def load(url_path):
         elif regex_folder.match(option):
             # set the plex-folder we want to store in later
             # this value gets passed to the ytie task, it is not used in this task
-            folder = option.split['='][1]
+            folder = option.split['=='][1]
         elif option == 'new':
             sw_new_folder = True
         elif option == 'list':
