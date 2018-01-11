@@ -76,8 +76,8 @@ def load(url_path):
         elif regex_folder.match(option):
             # set the plex-folder we want to store in later
             # this value gets passed to the ytie task, it is not used in this task
-            if debug: print 'DEBUG :: option -> folder {}'.format(option)
-            folder = str(option.split['='][1])
+            if debug: print 'DEBUG :: option -> {}'.format(option)
+            folder = option.split('=')[1]
         elif option == 'new':
             sw_new_folder = True
         elif option == 'list':
