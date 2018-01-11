@@ -120,6 +120,15 @@ def ytie(arguments):
     """
     import subprocess
 
+    def folder_match (switch, string):
+            folders = os.listdir(plex_path_root)
+            get_close_matches(string, folders, n=1, cutoff=0.2)
+            folders = os.listdir(plex_path_root + albumartist)
+            get_close_matches(string, folders, n=1, cutoff=0.2)
+
+        return get_close_matches(string, folders, n=1, cutoff=0.2)
+
+
     # collect our arguments
     filenames, file_path, sw_list, debug, folder, sw_new_folder = arguments
 
@@ -143,14 +152,25 @@ def ytie(arguments):
         #  - if the switch sw_new_folder == True, then we just using the passed string as foldername
         #  - if the switch sw_new_folder == Fasle, then we do a check on the existing folders and find the closed match and use the match as foldername/albumartist
         #      so it is ensured that typos are not passed any further and we end up in a messy folder structure on the fs and plex
-        #      modify cutoff= value to set how close foldername has to match an existing one (lower means less equality) - default = 0.6
-        if sw_new_folder:
+        #  - we can handle the follwoing syntax in folder: albumartist/album & albumartist (case 2 sets album = year-kw)
+        #      this allows to create a new albumartist/album structure. close_matches are performed on both values, if there is sw_new_folder == False
+        #  - modify cutoff= value to set how close foldername has to match an existing one (lower means less equality) - default = 0.6
+        try:
+            tag_albumartist, tag_album = folder.split('/')
+        except ValueError:
             tag_albumartist = folder
-        else:
-            folders = os.listdir(plex_path_root)
-            matching_folder = get_close_matches(folder, folders, n=1, cutoff=0.2)
-            if not matching_folder:
-                tag_albumartist = 'drunken idiots'
+            tag_album = date_year + '-' + date_week
+
+        if not sw_new_folder:
+            tag_albumartist = get_close_matches(tag_albumartist, os.listdir(plex_path_root), n=1, cutoff=0.2)
+            if not tag_albumartist:
+                tag_albumartist = 'drunk idiot'
+
+            else:
+                tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + albumartist), n=1, cutoff=0.2)
+                if not tag_album:
+                    tag_album = 'go home'
+
     else:
         tag_albumartist = date_year + '-' + date_month
         tag_album = date_year + '-' + date_week
