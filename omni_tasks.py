@@ -102,7 +102,7 @@ def load(url_path):
         ydl.download(url)
 
     # build our tuple to pass it to the next task
-    arguments = (filename, file_path_root, sw_list, debug, folder)
+    arguments = (filename, file_path_root, sw_list, debug, folder, sw_new_folder)
 
     if debug: print 'DEBUG :: task results\t{}'.format(arguments)
 
