@@ -154,28 +154,35 @@ def ytie(arguments):
 
         if debug: print 'DEBUG :: albumartist & album before close_match \nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
 
+        # if we got folder passed, but not sw_new_folder,
+        #  than make close_match on albumartist from folders under plex_root
+        #  than male close match on album from folders under plex_root/albumartist
         if not sw_new_folder:
             try:
-                tag_albumartist = get_close_matches(tag_albumartist, os.listdir(plex_path_root), n=1, cutoff=0.2)[0]
+                tag_albumartist = get_close_matches(tag_albumartist, next(os.walk(plex_path_root))[1], n=1, cutoff=0.2)[0]
             except IndexError:
                 tag_albumartist = 'drunk idiot'
-            if os.path.exists(plex_path_root + tag_albumartist):
-                try:
-                    tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + tag_albumartist), n=1, cutoff=0.2)[0]
-                except IndexError:
-                    tag_album = 'go home'
+
+            try:
+                tag_album = get_close_matches(tag_album, next(os.walk(plex_path_root + tag_albumartist))[1], n=1, cutoff=0.2)[0]
+            except IndexError:
+                tag_album = 'go home'
 
             if debug: print 'DEBUG :: albumartist & album after close_match\nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
-
-    elif sw_list:
-        # if we load a playlist, use the list name as album ...
-        if isinstance(filenames[0], unicode):
-            filenames[0] = unidecode(filenames[0])
-        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
-
     else:
         tag_albumartist = date_year + '-' + date_month
         tag_album = date_year + '-' + date_week
+
+    if sw_list:
+        # if we load a playlist, use the list name as album and overwrite things from folder
+        if isinstance(filenames[0], unicode):
+            filenames[0] = unidecode(filenames[0])
+        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
+        # if folder was not set, then define the albumartist as playlists
+        if not folder:
+            tag_albumartist = 'playlists'
+
+    if debug: print 'DEBUG :: final albumartist & album \nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
 
     # create a list for the filenames which has been cleaned by YTIE
     for filename in filenames:
