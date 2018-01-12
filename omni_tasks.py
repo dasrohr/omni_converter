@@ -175,9 +175,13 @@ def ytie(arguments):
 
     if sw_list:
         # if we load a playlist, use the list name as album and overwrite things from folder
-        if isinstance(filenames[0], unicode):
-            filenames[0] = unidecode(filenames[0])
-        tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
+        try:
+            if isinstance(filenames[0], unicode):
+                filenames[0] = unidecode(filenames[0])
+            tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
+        except IndexError:
+            print 'ERROR :: can not get playlistname without any loaded files'
+            tag_album = 'no-files-loaded'
         # if folder was not set, then define the albumartist as playlists
         if not folder:
             tag_albumartist = 'playlists'
