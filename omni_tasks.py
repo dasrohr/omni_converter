@@ -151,7 +151,7 @@ def ytie(arguments):
         except ValueError:
             tag_albumartist = folder
             tag_album = date_year + '-' + date_week
-            
+
         if debug: print 'DEBUG :: albumartist & album before close_match \nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
 
         if not sw_new_folder:
@@ -167,17 +167,14 @@ def ytie(arguments):
 
             if debug: print 'DEBUG :: albumartist & album after close_match\nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
 
-    else:
-        tag_albumartist = date_year + '-' + date_month
-        tag_album = date_year + '-' + date_week
-
-    if sw_list:
+    elif sw_list:
         # if we load a playlist, use the list name as album ...
         if isinstance(filenames[0], unicode):
             filenames[0] = unidecode(filenames[0])
         tag_album = str(filenames[0].split('__')[1]) # set the playlist name as album
+
     else:
-        # ... else generate the default album name (year-week)
+        tag_albumartist = date_year + '-' + date_month
         tag_album = date_year + '-' + date_week
 
     # create a list for the filenames which has been cleaned by YTIE
