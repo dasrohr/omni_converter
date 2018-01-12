@@ -139,17 +139,25 @@ def ytie(arguments):
 
     # build mp3-tags
     if folder:
-        # if we got passed a foldername, it is used as albumartist, so that the paths got build correctly to store and it gets created if it doe not exists
-        #  - if the switch sw_new_folder == True, then we just using the passed string as foldername
-        #  - if the switch sw_new_folder == Fasle, then we do a check on the existing folders and find the closed match and use the match as foldername/albumartist
-        #      so it is ensured that typos are not passed any further and we end up in a messy folder structure on the fs and plex
+        # if we got passed a foldername, it is used as albumartist/album, so that the paths got build correctly to store and it gets created if it doe not exists
+        #  - if the switch sw_new_folder == True, then we just using the passed strings as foldernames
+        #  - if the switch sw_new_folder == Fasle, then we do a check on the existing folders and find the closest match and use the match as albumartist/album
+        #      so it is ensured that typos are not passed any further
         #  - we can handle the follwoing syntax in folder: albumartist/album & albumartist (case 2 sets album = year-kw)
-        #      this allows to create a new albumartist/album structure. close_matches are performed on both values, if there is sw_new_folder == False
         #  - modify cutoff= value to set how close foldername has to match an existing one (lower means less equality) - default = 0.6
         try:
             tag_albumartist, tag_album = folder.split('/')
         except ValueError:
-            tag_albumartist = folder
+            # catch situation where there is more than 1 '/' in folder
+            if len(folder.split('/')) > 1:
+                tag_albumartist = folder.split('/')[0]
+                tag_album = folder.split('/')[1]
+            else:
+                tag_albumartist = folder
+                tag_album = date_year + '-' + date_week
+                
+        # catch the case folder is sth like 'albumaritst/' where album is empty
+        if not tag_album:
             tag_album = date_year + '-' + date_week
 
         if debug: print 'DEBUG :: albumartist & album before close_match \nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
