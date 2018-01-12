@@ -155,7 +155,7 @@ def ytie(arguments):
             else:
                 tag_albumartist = folder
                 tag_album = date_year + '-' + date_week
-                
+
         # catch the case folder is sth like 'albumaritst/' where album is empty
         if not tag_album:
             tag_album = date_year + '-' + date_week
