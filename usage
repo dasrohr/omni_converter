@@ -1,0 +1,31 @@
+OMNI_CONVERTER
+The omni_converter is a self written solution in python to download media from the web, and store them on the hard drive and make them available to the media server solution PLEX.
+It uses different tools written by thierd-parties.
+
+THE DOWNLOADER
+  to download the files from the web, this uses the python implementation of youtube_dl
+  youtube_dl is able to download all kind of media from the web from MANY different portals. For e.g.:
+    - youtube, myvideo, soundcloud, ... (see youtube_dl for a full list)
+  it is configured to convert video-files into mp3 files automatically.
+
+USAGE:
+  http://server-domain:port/video-url::arg_1::arg_x
+
+video-url
+  is the full url to a video, a file or a playlist
+  Example:
+    - https://www.youtube.com/watch?v=FqxWTJhBMyQ
+    - https://www.youtube.com/watch?v=7u6o6wdFeto&index=2&list=PL_GIjsCumTTlMkPvRR1To-fhxSdXM0e2w
+
+arg_x
+  there are a couple of arguments available that can be passed to change the behaviour of certain parts of the omni_converter
+  Arguments can be combined and get seperated by '::'
+  Possible arguments are:
+    - list      switch to enable the download of a playlist instead just one video
+    - debug     enable debug output in the logs
+    - nodl      skip the download and do a dry-run
+    - folder    folder defines the actual folder to be used on the FS and defines the albumartist and album of the loaded file
+                  - folder=albumartist/album    -> sets the albumartist to 'albumartist' and the album to 'album'
+                                                    the script performs a clostest match on the existing folders in the filesystem to avoid typos (if 'new' is not set - see 'new')
+    - new       used in combination with folder. is not used when folder is not set.
+                if folder is defined, the closest match will be skipped and we use exactly what folder defines as albumartist and album. This result in a new folder structure, if the defined folder does not already exists.
