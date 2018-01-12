@@ -1,5 +1,5 @@
 # Inststall Requirements
-- pip install Celery Celery[redis] eyed3 Pillow unidecode
+- pip install Celery Celery[redis] eyed3 Pillow unidecode validators
 - apt insall redis celery
   - see Celery-Documentations for integration with systemd
 
