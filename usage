@@ -29,3 +29,13 @@ arg_x
                                                     the script performs a clostest match on the existing folders in the filesystem to avoid typos (if 'new' is not set - see 'new')
     - new       used in combination with folder. is not used when folder is not set.
                 if folder is defined, the closest match will be skipped and we use exactly what folder defines as albumartist and album. This result in a new folder structure, if the defined folder does not already exists.
+
+ANSWERS
+  The http server performs a basic syntax check on the video-url to determine, wheather it is a valid url or not.
+  It answers with HTTP-Codes to tell the client if the Downloader is going to process the passed url, or not.
+
+  HTTP 200    -> video-url passed syntax check
+  HTTP 400    -> video-url is not a valid url, or empty
+
+  Besides of sending HTTP-Codes, it sends a REALY simpe HTML, file to show what informations has been recieved.
+  The informatin contains video-url & arguments
