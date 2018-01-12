@@ -159,12 +159,12 @@ def ytie(arguments):
         #  than male close match on album from folders under plex_root/albumartist
         if not sw_new_folder:
             try:
-                tag_albumartist = get_close_matches(tag_albumartist, next(os.walk(plex_path_root))[1], n=1, cutoff=0.2)[0]
+                tag_albumartist = get_close_matches(tag_albumartist, next(os.walk(plex_path_root))[1], n=1, cutoff=0.1)[0]
             except IndexError:
                 tag_albumartist = 'drunk idiot'
 
             try:
-                tag_album = get_close_matches(tag_album, next(os.walk(plex_path_root + tag_albumartist))[1], n=1, cutoff=0.2)[0]
+                tag_album = get_close_matches(tag_album, next(os.walk(plex_path_root + tag_albumartist))[1], n=1, cutoff=0.1)[0]
             except IndexError:
                 tag_album = 'go home'
 
