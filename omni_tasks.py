@@ -151,16 +151,18 @@ def ytie(arguments):
         except ValueError:
             tag_albumartist = folder
             tag_album = date_year + '-' + date_week
-
+            
         if debug: print 'DEBUG :: albumartist & album before close_match \nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
 
         if not sw_new_folder:
-            tag_albumartist = get_close_matches(tag_albumartist, os.listdir(plex_path_root), n=1, cutoff=0.2)
-            if not tag_albumartist:
+            try:
+                tag_albumartist = get_close_matches(tag_albumartist, os.listdir(plex_path_root), n=1, cutoff=0.2)[0]
+            except IndexError:
                 tag_albumartist = 'drunk idiot'
             if os.path.exists(plex_path_root + tag_albumartist):
-                tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + tag_albumartist), n=1, cutoff=0.2)
-                if not tag_album:
+                try:
+                    tag_album = get_close_matches(tag_album, os.listdir(plex_path_root + tag_albumartist), n=1, cutoff=0.2)[0]
+                except IndexError:
                     tag_album = 'go home'
 
             if debug: print 'DEBUG :: albumartist & album after close_match\nalbumartist\t{}\nalbum\t{}'.format(tag_albumartist, tag_album)
