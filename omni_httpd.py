@@ -18,6 +18,7 @@ def login():
     return static_file('form.html', root='.')
 
 @post('/') # or @route('/login', method='POST')
+@auth_basic(check)
 def do_login():
     url = request.forms.get('url')
     vid = request.forms.get('vid')
@@ -34,6 +35,7 @@ def do_login():
     return template("You entered: url: {{u}} - video id: {{vid}} - playlist id: {{pid}}</br>We are loading a {{target}}</br>debug? {{debug}}", u=url, vid=vid, pid=pid, target=target, debug=debug)
 
 @route('/src/<filename>')
+@auth_basic(check)
 def server_static(filename):
     return static_file(filename, root='./src/')
 
