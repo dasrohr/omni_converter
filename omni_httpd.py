@@ -8,6 +8,7 @@ from omni_tasks import load, ytie
 from bottle import template, get, post, request, run, error, abort, static_file, auth_basic, route
 
 def check(user, pw):
+    # TODO: only for dev ... user and pw must be stored outside of here for prod!
     if user == 'junge' and pw == 'bier':
         return(True)
     return(False)
