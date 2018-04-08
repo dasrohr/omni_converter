@@ -1,0 +1,232 @@
+<style type="text/css">
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,900,700italic,900italic");
+body {
+  font-family: 'Roboto';
+  background: #eee;
+}
+.wrapper {
+  display: table;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 400px;
+  margin: auto;
+  background: #fff;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 19px 38px rgba(0,0,0,0.3), 0 15px 12px rgba(0,0,0,0.22);
+          box-shadow: 0 19px 38px rgba(0,0,0,0.3), 0 15px 12px rgba(0,0,0,0.22);
+  z-index: 100;
+}
+.title {
+  display: block;
+  padding: 24px 24px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.87);
+}
+.content {
+  display: block;
+  padding: 24px 24px 16px;
+}
+.content ul {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.content ul li {
+  display: block;
+  margin: 8px 0;
+  padding: 0;
+}
+.content ul li::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.content ul li:first-of-type {
+  margin-top: 0;
+}
+.content ul li:last-of-type {
+  margin-bottom: 0;
+}
+.content ul li * {
+  float: left;
+}
+.content p {
+  margin: 0;
+  color: rgba(0,0,0,0.54);
+}
+input[type=text],
+select {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 0;
+  margin: 0 0 8px;
+  height: 40px;
+  line-height: 3;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  outline: none;
+  color: rgba(0,0,0,0.87);
+  font-weight: medium;
+  font-size: 16px;
+  vertical-align: top;
+  -webkit-transition: border 0.56s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border 0.56s cubic-bezier(0.4, 0, 0.2, 1);
+}
+input[type=text]:focus,
+select:focus {
+  border-bottom: 2px solid #2196f3;
+}
+input[type=text].block,
+select.block {
+  width: 100%;
+}
+input[type=text].wicon,
+select.wicon {
+  width: 292px;
+}
+.icon {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  vertical-align: top;
+}
+.icon.location {
+  background: url("https://google.github.io/material-design-icons/action/svg/ic_room_24px.svg") no-repeat center;
+}
+.icon.mail {
+  background: url("https://google.github.io/material-design-icons/communication/svg/ic_email_24px.svg") no-repeat center;
+}
+select {
+  width: 100px;
+  margin-left: 8px;
+}
+input[type=text] {
+  width: 184px;
+}
+.selection {
+  display: inline-block;
+  position: absolute;
+  padding: 8px 0;
+  background: #fff;
+  -webkit-box-shadow: 0 0 8px rgba(0,0,0,0.24);
+          box-shadow: 0 0 8px rgba(0,0,0,0.24);
+  overflow: hidden;
+  opacity: 0;
+  z-index: 300;
+}
+.selection a {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 0 16px 20px;
+  height: 48px;
+  line-height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.selection a:active {
+  background: #eee;
+}
+.actions {
+  display: block;
+  height: 48px;
+  padding: 0 16px 16px;
+  text-align: right;
+}
+.actions .button {
+  float: right;
+  margin-left: 8px;
+}
+.button {
+  display: inline-block;
+  position: relative;
+  padding: 0 8px;
+  height: 36px;
+  border: none;
+  margin: 8px 0;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2196f3;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: none;
+  outline: none;
+  -webkit-transition: color 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), color 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.button:hover {
+  -webkit-box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.28);
+          box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.28);
+}
+.button:active {
+  -webkit-box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+.button.blue {
+  background: #2196f3;
+  color: rgba(255,255,255,0.95);
+}
+</style>
+
+
+<body>
+  <form action="/" name="omni_input" method="post">
+  <div class="wrapper">
+    <div class="title">OMNI Dowloader</div>
+    <div class="content">
+      <ul>
+        Enter the URL to download:</br>
+        <li>
+          <input class="block" name="url" id="url" type="text" placeholder="URL to download" onchange="useURL()"/>
+        </li>
+        <li>
+          <label for="target">Select preference</label></br>
+          <select name="target" type="text" placeholder="Select...">
+            <option value="v">Video</option>
+            <option value="p">Playlist</option>
+          </select>
+        </li>
+        </br>
+        <hr>
+        </br>
+        or enter just the ID:
+        <li>
+          <input class="block" name="vid" id="vid" type="text" placeholder="Video ID to download" onchange="useVID()"/>
+        </li>
+        <li>
+          <input class="block" name="pid" id="pid" type="text" placeholder="Playlist ID to download" onchange="usePID()"/>
+        </li>
+        </br>
+        <li>
+          <input class="block" name="folder" id="folder" type="text" placeholder="Albumartist / Album"/></br>
+          <input type="checkbox" id="folder_create" name="folder_create" value="1"> Create Folder if not exist
+        </li>
+        </br>
+        <li>
+          <input type="checkbox" id="simulate" name="simulate" value="1"> Simulate - skip download
+        </li>
+        <li>
+          <input type="checkbox" id="debug" name="debug" value="1"> Debug
+        </li>
+      </ul>
+    </div>
+    <div class="actions">
+      <button class="button blue">submit</button>
+      <input type="reset" class="button"/>
+    </div>
+  </div>
+  </form>
+  <script type="text/javascript" src="/src/logic.js"></script>
+</body>
