@@ -18,15 +18,18 @@ def check(user, pw):
     pw = create_hash(pw).hexdigest()
     with open('.htpasswd', 'r') as passdb:
         for line in passdb:
-            if line.split(':')[0] == user and line.split(':')[1].rstrip() == pw:
+            pwd_user, pwd_pw = line.split(':')
+            if pwd_user == user and pwd_pw.rstrip() == pw:
                 return True
             return False
 
+# serve the form
 @get('/')
 @auth_basic(check)
 def serve_form():
     return static_file('form.html', root='.')
 
+# handle the POST data from the form
 @post('/')
 @auth_basic(check)
 def collect_form():
@@ -37,18 +40,22 @@ def collect_form():
             value = None
         values[item] = value
 
+    # if we entered a url, is not valid, http400
     if 'url' in values.keys():
         if values['url'] and not validate_url(values['url']):
             abort(400, 'inval - ' + values['url'])
+        # if we entered nothing - no url & no ids, http400
         if not values['url'] and not values['vid'] and not values['pid']:
             abort(400, 'empty')
+    # if remove folder value if unset
     if 'folder' in values.keys() and not values['folder']:
         del values['folder']
-
+    # answer to user, show values if debug = true
     if 'debug' in values.keys() and values['debug']:
         return template("{{dict}}", dict=values)
     return 'ok'
 
+# serve files in ./src/
 @route('/src/<filename>')
 @auth_basic(check)
 def server_static(filename):
