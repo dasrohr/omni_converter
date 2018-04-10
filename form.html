@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="./src/style.css">
 
 <body>
-  <form action="/" name="omni_input" method="post">
+  <form action="/" name="omni_input" method="post" autocomplete="off">
   <div class="wrapper">
     <div class="title">OMNI Dowloader</div>
     <div class="content">
@@ -19,7 +19,6 @@
         </li>
         </br>
         <hr>
-        <hr>
         <b>Or enter just one ID:</b></br>
         <li>
           <input class="block" name="vid" id="vid" type="text" placeholder="Video ID to download" onchange="useVID()"/>
@@ -29,14 +28,12 @@
         </li>
         </br>
         <hr>
-        <hr>
         <b>Optional:</b></br>
         <li>
           <input class="block" name="folder" id="folder" type="text" placeholder="Albumartist / Album"/></br>
           <input type="checkbox" id="folder_create" name="folder_create" value="1"> Create Folder if not exist
         </li>
         </br>
-        <hr>
         <hr>
         <b>Debug:</b></br>
         <li>
