@@ -42,10 +42,12 @@ def collect_form():
             abort(400, 'inval - ' + values['url'])
         if not values['url'] and not values['vid'] and not values['pid']:
             abort(400, 'empty')
-    if 'folder' in values.keys() and  not values['folder']:
+    if 'folder' in values.keys() and not values['folder']:
         del values['folder']
 
-    return template("You entered: {{dict}}", dict=values)
+    if 'debug' in values.keys() and values['debug']:
+        return template("{{dict}}", dict=values)
+    return 'ok'
 
 @route('/src/<filename>')
 @auth_basic(check)
