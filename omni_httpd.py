@@ -1,46 +1,58 @@
 #!/usr/bin/env python
-""" simple HTTP server in python
-proccesses GET and uses HTTP Path and pass to a celery worker """
+"""
+simple HTTP server in python
+serve a simple form to use the OMNI Downloader
+"""
 from validators import url as validate_url
 from celery import chain
 from omni_tasks import load, ytie
 
-from bottle import template, get, post, request, run, error, abort, static_file, auth_basic, route
+from bottle import template, get, post, request, run, error, abort, static_file, auth_basic, route, FormsDict, MultiDict
+from hashlib import sha512 as create_hash
 
 def check(user, pw):
-    # TODO: only for dev ... user and pw must be stored outside of here for prod!
-    if user == 'junge' and pw == 'bier':
-        return(True)
-    return(False)
+    '''
+    really basic user and password check
+    use a SHA512 hashed password from .htpasswd-file and check if the entered username and password matches
+    '''
+    pw = create_hash(pw).hexdigest()
+    with open('.htpasswd', 'r') as passdb:
+        for line in passdb:
+            if line.split(':')[0] == user and line.split(':')[1].rstrip() == pw:
+                return True
+            return False
 
-@get('/') # or @route('/login')
+@get('/')
 @auth_basic(check)
-def login():
+def serve_form():
     return static_file('form.html', root='.')
 
-@post('/') # or @route('/login', method='POST')
+@post('/')
 @auth_basic(check)
-def do_login():
-    url = request.forms.get('url')
-    vid = request.forms.get('vid')
-    pid = request.forms.get('pid')
-    target = request.forms.get('target')
-    debug = request.forms.get('debug')
+def collect_form():
+    values = {}
+    for item in request.forms:
+        value = request.forms.get(item)
+        if not value:
+            value = None
+        values[item] = value
 
-    if url and not validate_url(url):
-        abort(400, 'url invalid - ' + url)
+    if 'url' in values.keys():
+        if values['url'] and not validate_url(values['url']):
+            abort(400, 'inval - ' + values['url'])
+        if not values['url'] and not values['vid'] and not values['pid']:
+            abort(400, 'empty')
+    if 'folder' in values.keys() and  not values['folder']:
+        del values['folder']
 
-    if not url and not vid and not pid:
-        abort(400, 'You entered nothing!? - DoeDoeDoe')
-
-    return template("You entered: url: {{u}} - video id: {{vid}} - playlist id: {{pid}}</br>We are loading a {{target}}</br>debug? {{debug}}", u=url, vid=vid, pid=pid, target=target, debug=debug)
+    return template("You entered: {{dict}}", dict=values)
 
 @route('/src/<filename>')
 @auth_basic(check)
 def server_static(filename):
     return static_file(filename, root='./src/')
 
-run()
+run(port=4000)
 
 ###########################
 #
