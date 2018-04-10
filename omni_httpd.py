@@ -61,7 +61,7 @@ def collect_form():
 def server_static(filename):
     return static_file(filename, root='./src/')
 
-run(port=4000)
+run(host="0.0.0.0", port=4000)
 
 ###########################
 #
