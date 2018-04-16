@@ -55,7 +55,7 @@ def check_cred(user, pw):
 @auth_basic(check_cred)
 def serve_form():
     ''' serve the form '''
-    return static_file('form.html', root='.')
+    return static_file('src/form.html', root='.')
 
 @post('/')
 @auth_basic(check_cred)
