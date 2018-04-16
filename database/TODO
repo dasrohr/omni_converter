@@ -1,0 +1,14 @@
+functions:
+- add video id to history
+- add file to files
+- write id3 infos for file
+
+- query for video id in history
+- query file for video id
+
+- query for a given user (basic_auth) & return secret from db for username - this module is for db actions only. if the entered pass from the user is correct has to be checked elsewhere
+
+- query loaded files for every user
+
+
+  check if db is avail
