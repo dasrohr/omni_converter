@@ -11,11 +11,8 @@
           <input class="block" name="url" id="url" type="text" placeholder="URL to download" onchange="useURL()"/>
         </li>
         <li>
-          <label for="target">Select preference</label></br>
-          <input type="radio" id="radio_v" name="target" value='v' checked/>
-          <label for="v">Video</label></br>
-          <input type="radio" id="radio_p" name="target" value='p'/>
-          <label for="p">Playlist</label>
+          <label><input type="radio" id="radio_v" name="target" value='v' checked/>Video</label>
+          <label><input type="radio" id="radio_p" name="target" value='p'/>Playlist</label>
         </li>
         </br>
         <hr>
@@ -30,17 +27,18 @@
         <hr>
         <b>Optional:</b></br>
         <li>
-          <input class="block" name="folder" id="folder" type="text" placeholder="Albumartist / Album"/></br>
-          <input type="checkbox" id="folder_create" name="folder_create" value="1"> Create Folder if not exist
+          <input class="block" name="albart" id="albart" type="text" placeholder="Albumartist (default: YYYY-MM)"/></br>
+          <input class="block" name="alb" id="alb" type="text" placeholder="Album (default: YYYY-KW)"/></br>
+          <label><input type="checkbox" id="force_folder" name="force_folder" value="1">Create Folder if not exist</label>
         </li>
         </br>
         <hr>
         <b>Debug:</b></br>
         <li>
-          <input type="checkbox" id="simulate" name="simulate" value="1"> Simulate - skip download
+          <label><input type="checkbox" id="simulate" name="simulate" value="1"> Simulate - skip download</label>
         </li>
         <li>
-          <input type="checkbox" id="debug" name="debug" value="1"> Debug
+          <label><input type="checkbox" id="debug" name="debug" value="1"> Debug</label>
         </li>
       </ul>
     </div>
