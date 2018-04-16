@@ -176,6 +176,14 @@ input[type=text] {
   background: #2196f3;
   color: rgba(255,255,255,0.95);
 }
+.button.darkblue {
+  background: #005db4;
+  color: rgba(255,255,255,0.95);
+}
+.button.green {
+  background: #6ce480;
+  color: rgba(255,255,255,0.95);
+}
 hr {
   height: 5px;
   color: #000000;
