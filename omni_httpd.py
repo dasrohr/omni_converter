@@ -94,10 +94,6 @@ def post_form():
     if 'alb' in values and not values['alb']:
         del values['alb']
 
-    # create indicator if there was an alb or albart entered
-    if 'alb' in values or 'albart' in values:
-        values['custom_path'] = True
-
     # start the Handler to initiate Download
     handler.delay(**values)
 
