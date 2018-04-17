@@ -28,8 +28,12 @@
         <b>Optional:</b></br>
         <li>
           <input class="block" name="albart" id="albart" type="text" placeholder="Albumartist (default: YYYY-MM)"/></br>
-          <input class="block" name="alb" id="alb" type="text" placeholder="Album (default: YYYY-KW)"/></br>
-          <label><input type="checkbox" id="force_folder" name="force_folder" value="1">Create Folder if not exist</label>
+          <input class="block" name="alb" id="alb" type="text" placeholder="Album (default: YYYY-☕)"/></br>
+          <label><input type="checkbox" id="force_folder" name="force_folder" value="1">Force using what I entered above</label>
+        </li>
+        <li>
+          Note:</br>
+          This causes that the exact strings you entered above are getting used. If you do not check this option, the closest match is getting used instead, in case what you entered does not exist.
         </li>
         </br>
         <hr>
@@ -51,8 +55,8 @@
       <b>More Actions:</b>
     </div>
     <div class="actions">
-      <input type="button" class="button darkblue" onclick="location.href='src/sub.html';"      value="Playlist Crawler" />
-      <input type="button" class="button green"    onclick="location.href='src/sub.html';"      value="Status"           />
+      <input type="button" class="button darkblue" onclick="location.href='src/pl_crawl.html';"      value="Playlist Crawler" />
+      <input type="button" class="button green"    onclick="location.href='src/status.html';"          value="Status"           />
     </div>
   </div>
   </form>
