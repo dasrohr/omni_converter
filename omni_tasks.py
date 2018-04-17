@@ -40,8 +40,8 @@ else:
     exit('Missing config file')
 
 # If there is no DB File, create and initialize a new one
-if not path.isfile(config['db_file']):
-    database.initialize_db(config['db_file'])
+if not path.isfile(config['database_file']):
+    database.initialize_db(config['database_file'])
 # open the database connection to the db-file from the config
 db = database.connect(config['database_file'])
 
@@ -59,6 +59,7 @@ class Video:
         self.alb = None                                         # initiate the alb
         self.date = date.now().strftime('%Y-%m-%dT%H:%M:%S')    # date when this download is executed (now)
         self.target = None                                      # initiate the target attribute so that the DB entry can set to NULL. The target is the file the symlinks targets in case we have to symlink
+        self.type = 'f'                                         # default indicator if final result is a file or a link - "l" = link
         self.force_folder = False                               # default inidicator if we enforce the path if custom alb/albart entered
         self.debug = False                                      # default debug state
         self.simulate = False                                   # default simulate state - no download if true TODO: this might be quiet dangerous atm as this gets ignored foer all other stepps (!!!) think about removing!
@@ -66,9 +67,9 @@ class Video:
         # set attributes from passed kwargs
         for key, value in kwargs.items():
             # translate 0 and 1 into True and False
-            if value == 1:
+            if value == '1':
                 value = True
-            elif value == 0:
+            elif value == '0':
                 value = False
             setattr(self, key, value)
         
@@ -108,10 +109,12 @@ class Video:
         if self.debug:
             self.dl_opts['quiet'] = 'False'
 
+        # TODO make debug output
+        print(self.__dict__)
+
         # check if the Video has already been downloaded by runnin the database Query
         if not database.check_id(db, self.id):
             database.add_to_history(db, **self.__dict__)
-            self.type = 'f'
             # check the TODO from above ... catching case where url is invalid, target does not exist
             download.delay(**self.__dict__)
         # if the ID has been downloaded already, skip the dl and create a link to the loaded file
@@ -125,7 +128,8 @@ class Video:
                 symlink(self.target + '.mp3', path.join(self.path, self.filename + '.mp3'))
                 # add entry to DB
                 database.add_file(db, **self.__dict__)
-                if self.debug: print('created link: ({}) -> ({})'.format(path.join(self.path, self.filename) + '.mp3', self.target + '.mp3'))
+                #TODO make debug only
+                print('created link: ({}) -> ({})'.format(path.join(self.path, self.filename) + '.mp3', self.target + '.mp3'))
             
             print('{} already loaded'.format(self.id))
             if self.debug: print(self.__dict__)
