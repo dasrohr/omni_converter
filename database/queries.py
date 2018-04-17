@@ -35,15 +35,15 @@ def get_filename(db, *id):
     return False
   return result
 
-def check_for_existing_link(db, id, alb):
+def check_for_existing_link(db, id, path):
   '''
-  chek if there is already a link to a file in the given Album
-  this should prevent multiple links to a file in a single Album
-  return True if there is already a link to the ID in the given Album
-  return False if there is no link to the ID in the given Album
+  chek if there is already a link to a file in the given Path
+  this should prevent multiple links to a file in a single Path
+  return True if there is already a link to the ID in the given Path
+  return False if there is no link to the ID in the given Path
   '''
   cur = db.cursor()
-  result = cur.execute('SELECT count() FROM files WHERE id == ? AND alb == ? AND type == "l"', (id, alb)).fetchone()[0]
+  result = cur.execute('SELECT count() FROM files WHERE id == ? AND path == ? AND type == "l"', (id, path)).fetchone()[0]
   if result > 0:
     return True
   return False
@@ -57,7 +57,7 @@ def add_to_history(db, **kwargs):
   '''
   cur = db.cursor()
   print('DEBUG: {}'.format(kwargs))
-  cur.execute('INSERT INTO history (id, source, date, playlist, url) VALUES (:id, :source, :date, :playlist, :url)', kwargs)
+  cur.execute('INSERT INTO history (id, source, date, playlist, url, source_title) VALUES (:id, :source, :date, :playlist, :url, :source_title)', kwargs)
   db.commit()
 
 def add_file(db, **kwargs):
