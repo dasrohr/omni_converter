@@ -34,29 +34,34 @@ from os import rename as move
 from difflib import get_close_matches
 
 # load the config from file
-# TODO: check if file is there
-config = config_load(open("./config.yml"))
+if path.isfile('./config.yml'):
+    config = config_load(open("./config.yml"))
+else:
+    exit('Missing config file')
 
+# If there is no DB File, create and initialize a new one
+if not path.isfile(config['db_file']):
+    database.initialize_db(config['db_file'])
 # open the database connection to the db-file from the config
-db = database.init(config['database_file'])
+db = database.connect(config['database_file'])
 
 # create celery applicatoin and define communication broker
 omni = Celery('omni_worker', brocker='redis://localhost')
 
 class Video:
     def __init__(self, **kwargs):
-        self.playlist = None
+        self.playlist = None                                    # initiate attribute to store the playlist title in it, if there is one
+        self.playlist_id = None                                 # initiate attribute to store the playlist ID in, if there is one
         self.filename = gen_filename()                          # file name (random string with 20 chars)
         self.art = None                                         # initiate the artist
         self.title = None                                       # initiate the title (id3-title)
         self.albart = None                                      # initiate the albart
         self.alb = None                                         # initiate the alb
         self.date = date.now().strftime('%Y-%m-%dT%H:%M:%S')    # date when this download is executed (now)
-        self.target = None                                      # define the target attribute so that the DB entry can set to NULL. The target is the file the symlinks targets in case we have to symlink
+        self.target = None                                      # initiate the target attribute so that the DB entry can set to NULL. The target is the file the symlinks targets in case we have to symlink
         self.force_folder = False                               # default inidicator if we enforce the path if custom alb/albart entered
-        self.custom_path = False                                # default initicator of a custom alb/albart was entered
         self.debug = False                                      # default debug state
-        self.simulate = False                                   # default simulate state - if HTML Form sets to true, we do not download
+        self.simulate = False                                   # default simulate state - no download if true TODO: this might be quiet dangerous atm as this gets ignored foer all other stepps (!!!) think about removing!
 
         # set attributes from passed kwargs
         for key, value in kwargs.items():
@@ -69,12 +74,14 @@ class Video:
         
         # build the url to the video
         # TODO: atm, youtube is hardcoded - this needs to be flexible for more serivces (SoundCloud etc.)
+        #       this includes that the webform needs to be smarter as well - have a feeling as this will be complicated to implement
         self.url = 'https://www.youtube.com/watch?v=' + self.id
 
         # parse the URL for the Website name
         self.source = urlparse(self.url).netloc.replace('www.', '').split('.')[0]
 
         # build the path attribute depending on what was entered in the form
+        # when loading a playlist, the defaults are different, but the process of sorting things out is the same
         if self.playlist:
             self.build_path('playlists', self.playlist)
         else:
@@ -83,6 +90,7 @@ class Video:
     def download(self):
         '''
         set options and Download
+        also handle case were the ID is already in the History
         '''
         #TODO: catch case where the entered target does not exit (invalid YT url, ID, etc.)
         self.dl_opts = {
@@ -96,14 +104,17 @@ class Video:
             'quiet': 'True',
             'noplaylist': 'True',
         }
-        if hasattr(self, 'debug'):
+        # enable YTDL debuging
+        if self.debug:
             self.dl_opts['quiet'] = 'False'
 
-        if not self.in_history():
-            self.add_history()
+        # check if the Video has already been downloaded by runnin the database Query
+        if not database.check_id(db, self.id):
+            database.add_to_history(db, **self.__dict__)
             self.type = 'f'
             # check the TODO from above ... catching case where url is invalid, target does not exist
             download.delay(**self.__dict__)
+        # if the ID has been downloaded already, skip the dl and create a link to the loaded file
         else:
             self.type = 'l'
             # build the destination path for the symlink and db-entry
@@ -114,6 +125,7 @@ class Video:
                 symlink(self.target + '.mp3', path.join(self.path, self.filename + '.mp3'))
                 # add entry to DB
                 database.add_file(db, **self.__dict__)
+                if self.debug: print('created link: ({}) -> ({})'.format(path.join(self.path, self.filename) + '.mp3', self.target + '.mp3'))
             
             print('{} already loaded'.format(self.id))
             if self.debug: print(self.__dict__)
@@ -154,12 +166,6 @@ class Video:
 
         create_folder(self.albart, self.alb)
         self.path = path.join(config['plex_root'], self.albart, self.alb)
-                
-    def in_history(self):
-        return database.check_id(db, self.id)
-
-    def add_history(self):
-        return database.add_to_history(db, **self.__dict__)
 
 def create_folder(*sub_dirs, root = config['plex_root']):
     '''
@@ -280,6 +286,14 @@ def download(**opts):
         # download
         # note that URL get passed as a list for youtube-dl to work
         youtube_dl.YoutubeDL(opts['dl_opts']).download([opts['url'],])
+        # TODO
+        # Idea: As the DL will take a moment, and so do ytie
+        #  might be worth to kick off the dl in a seperate task, then run ytie and then wait until the dl has finished
+        #  by checking the task state untill FINISHED
+        #  there comes sth in mind with .state or .ready
+        # ytie here
+        # create images
+        # file tags here
         # move the downloaded file to the desired place as defined in 'path'
         move(path.join(config['download_root'], opts['filename'] + '.mp3'), path.join(opts['path'], opts['filename'] + '.mp3'))
         # add the file to the db
