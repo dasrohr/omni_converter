@@ -57,7 +57,7 @@ def add_to_history(db, **kwargs):
   '''
   cur = db.cursor()
   print('DEBUG: {}'.format(kwargs))
-  cur.execute('INSERT INTO history (id, source, date, playlist, url, source_title) VALUES (:id, :source, :date, :playlist, :url, :source_title)', kwargs)
+  cur.execute('INSERT INTO history VALUES (:id, :source, :date, :playlist, :playlist_id, :url, :source_title)', kwargs)
   db.commit()
 
 def add_file(db, **kwargs):
