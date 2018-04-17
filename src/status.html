@@ -1,7 +1,7 @@
-<%
-if len(names) == 0:
-  names.append('None')
-%>
+Currently loading:</br>
+% if len(names) == 0:
+<p>Nothing</p>
+% else:
 % for name in names:
-<p>{{ name }}</p>
+  <p>{{ name }}</p>
 % end
