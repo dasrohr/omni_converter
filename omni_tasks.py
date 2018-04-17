@@ -47,10 +47,11 @@ class Video:
     def __init__(self, **kwargs):
         self.playlist = None
         self.filename = gen_filename()                          # file name (random string with 20 chars)
-        self.art = None
-        self.alb = date.now().strftime('%Y-KW%U')               # default Artist is      Year-WeekOfYear
-        self.albart = date.now().strftime('%Y-%m')              # default AlbumArtist is Year-Month
-        self.date = date.now().strftime('%Y-%m-%dT%H:%M:%S')    # date when this download is executed
+        self.art = None                                         # initiate the artist
+        self.title = None                                       # initiate the title (id3-title)
+        self.albart = None                                      # initiate the albart
+        self.alb = None                                         # initiate the alb
+        self.date = date.now().strftime('%Y-%m-%dT%H:%M:%S')    # date when this download is executed (now)
         self.target = None                                      # define the target attribute so that the DB entry can set to NULL. The target is the file the symlinks targets in case we have to symlink
         self.force_folder = False                               # default inidicator if we enforce the path if custom alb/albart entered
         self.custom_path = False                                # default initicator of a custom alb/albart was entered
@@ -72,32 +73,12 @@ class Video:
 
         # parse the URL for the Website name
         self.source = urlparse(self.url).netloc.replace('www.', '').split('.')[0]
-        # if we load a playlist and no custom alb is entered, then set playlist as album
-        if self.playlist and not self.custom_path and not self.alb == date.now().strftime('%Y-KW%U'):
-            self.alb = self.playlist
-        # update the path attribute
-        self.update_path()
 
-        # TODO: Set permission on created folders!? (plex:plex d:740 f: 640)
-        # Folder Creation Handling
-        # default situation
-        # note: check on force_path is not necessary - we entered no custom alb/albart!
-        if not self.custom_path and not path.exists(self.path):
-            makedirs(self.path)
-
-        # custom alb/albart entered in form and path is enforced
-        # create dirs if not exist
-        elif self.custom_path and self.force_folder and not path.exists(self.path):
-            makedirs(self.path)
-
-        # custom alb/albart is entered, path not enforced
-        # do fuzzy match on existing folders and choose closest match
-        # folder creation is not necessary - fuzzy match will always return something
-        elif self.custom_path and not self.force_folder:
-            self.albart = fuzzy_folder(self.albart)
-            self.alb = fuzzy_folder(self.alb, depth = self.albart)
-            # it is likely that alb aor albart has changed - update path
-            self.update_path()
+        # build the path attribute depending on what was entered in the form
+        if self.playlist:
+            self.build_path('playlists', self.playlist)
+        else:
+            self.build_path(date.now().strftime('%Y-%m'), date.now().strftime('%Y-KW%U'))
 
     def download(self):
         '''
@@ -128,7 +109,7 @@ class Video:
             # build the destination path for the symlink and db-entry
             self.target = path.join(*database.get_filename(db, self.id))
             # check if there is already a symlink to the file in the current Album
-            if not database.check_for_existing_link(db, self.id, self.alb):
+            if not database.check_for_existing_link(db, self.id, self.path):
                 # create a Symlink
                 symlink(self.target + '.mp3', path.join(self.path, self.filename + '.mp3'))
                 # add entry to DB
@@ -137,19 +118,59 @@ class Video:
             print('{} already loaded'.format(self.id))
             if self.debug: print(self.__dict__)
 
-    def update_path(self):
+    def build_path(self, def_albart, def_alb):
         '''
-        update the path attribute
-        in case we changed the albart or alb during process
+        create folders and build the path depending on the entered values
+        also sets the albart and alb attributes to the desired value
         '''
-        self.path = path.join(config['plex_root'], self.albart, self.alb)
+        # default situation: nothing entered
+        if not self.albart and not self.alb:
+            self.albart = def_albart
+            self.alb = def_alb
 
+        # entered albart but not alb
+        elif self.albart and not self.alb:
+            self.alb = def_alb
+            if not self.force_folder:
+                self.albart = fuzzy_folder(self.albart)
+
+        # special situation: entered no albart but alb
+        elif not self.albart and self.alb:
+            self.albart = def_albart
+            if not self.force_folder:
+                # note that this case can force the fuzzy match against an empty folder
+                #  (albart got created, because it did not exist - causing an empty folder for fuzzy match)
+                #  fuzzy_folder() is handling this case
+                self.alb = fuzzy_folder(self.alb, depth = self.albart)
+
+        # entered both
+        elif self.albart and self.alb:
+            if not self.force_folder:
+                self.albart = fuzzy_folder(self.albart)
+                self.alb = fuzzy_folder(self.alb, depth = self.albart)
+
+        # TODO print only when debug
+        print('atr after build_path: albart({}) alb({}) force({})'.format(self.albart, self.alb, self.force_folder))
+
+        create_folder(self.albart, self.alb)
+        self.path = path.join(config['plex_root'], self.albart, self.alb)
+                
     def in_history(self):
         return database.check_id(db, self.id)
 
     def add_history(self):
         return database.add_to_history(db, **self.__dict__)
 
+def create_folder(*sub_dirs, root = config['plex_root']):
+    '''
+    create a path recursive if not exist. 
+    path is build for the given arguments in the order passed
+    TODO: also set chown?
+    '''
+    for sub_dir in sub_dirs:
+        root += sub_dir + '/'
+    if not path.exists(root):
+        makedirs(root, 0o740)
 
 def get_ids_from_pl(pl_id, **opts):
     '''
@@ -172,7 +193,7 @@ def get_ids_from_pl(pl_id, **opts):
     url = config['api_base_url'] + 'playlistItems'
     ids = []
     for video in get(url, params=params).json()['items']:
-        ids.append(Video(id = video['snippet']['resourceId']['videoId'], title = video['snippet']['title'], playlist = playlist_title, **opts))
+        ids.append(Video(id = video['snippet']['resourceId']['videoId'], source_title = video['snippet']['title'], playlist = playlist_title, **opts))
     return ids
 
 def get_title_from_id(id):
@@ -200,12 +221,21 @@ def fuzzy_folder(string, depth = None, cutoff = 0.1):
     depth can be a string which will extend the default path to look in
     default path is config['plex_root']
     the default cutoff can be overwritten
-    return tuple with the closest match of given string
+    return the foldername with the closest match of given string
     '''
+    print('fuzzy input: ({})'.format(string))
     work_dir = config['plex_root']
     if depth:
         work_dir = path.join(work_dir, depth)
-    return get_close_matches(string, next(walk(work_dir))[1], n=1, cutoff=cutoff)[0]
+
+    print('fuzzy path: ({})'.format(work_dir))
+    # if we doing a fuzzy match on a folder that does not exits, there is nothing to fuzzy match with
+    # so create the folder with the given string and return the string as a match
+    # can not do more in this situation
+    if path.exists(work_dir):
+        return get_close_matches(string, next(walk(work_dir))[1], n=1, cutoff=cutoff)[0]
+    create_folder(string, root = work_dir)
+    return string
 
 def gen_filename(size=20, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
     '''
@@ -229,7 +259,7 @@ def handler(**opts):
     #  So there is sth fishy going on if both are empty
     if 'vid' in opts:
         # create Video object for the ID
-        videos.append(Video(id = opts['vid'], title = get_title_from_id(opts['vid']), **opts))
+        videos.append(Video(id = opts['vid'], source_title = get_title_from_id(opts['vid']), **opts))
     elif 'pid' in opts:
         # get all VideoIDs from all Videos in a Playlist and create Video objects foer every ID
         for video in get_ids_from_pl(opts['pid'], **opts):
@@ -245,7 +275,7 @@ def handler(**opts):
 
 @omni.task
 def download(**opts):
-    if opts['debug']: print('start dl: {}'.format(opts['title']))
+    if opts['debug']: print('start dl: {}'.format(opts['video_title']))
     if not opts['simulate']:
         # download
         # note that URL get passed as a list for youtube-dl to work
@@ -254,7 +284,7 @@ def download(**opts):
         move(path.join(config['download_root'], opts['filename'] + '.mp3'), path.join(opts['path'], opts['filename'] + '.mp3'))
         # add the file to the db
         database.add_file(db, **opts)
-    if opts['debug']: print('finish dl: {} - simulated: {}'.format(opts['title'], opts['simulate']))
+    if opts['debug']: print('finish dl: {} - simulated: {}'.format(opts['video_title'], opts['simulate']))
 
 #def load(url_path):
 #    """ task to load a video and convert it into mp3 """
