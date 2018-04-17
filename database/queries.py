@@ -66,5 +66,5 @@ def add_file(db, **kwargs):
   '''
   cur = db.cursor()
   print('DEBUG: {}'.format(kwargs))
-  cur.execute('INSERT INTO files VALUES (:id, :path, :filename, :art, :albart, :alb, :type, :target)', kwargs)
+  cur.execute('INSERT INTO files VALUES (:id, :path, :filename, :art, :albart, :alb, :title, :type, :target)', kwargs)
   db.commit()
