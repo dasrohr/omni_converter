@@ -122,8 +122,11 @@ def status():
     '''
     import json
     tasks = []
-    for task in inspect('active')['celery@toniwarnecke-lp']:
-        tasks.append(json.loads(task['kwargs'].replace("'", "\"").replace("None", "\"\"").replace("False", "\"False\"").replace("[{...}]", "\"gen\""))['source_title'])
+    inspect_out = inspect('active')
+    # extra for needed as Celery packs the values in a dict with the hostname as key
+    for key in inspect_out.keys():
+        for task in inspect_out[key]:
+            tasks.append(json.loads(task['kwargs'].replace("'", "\"").replace("None", "\"\"").replace("False", "\"False\"").replace("[{...}]", "\"gen\""))['source_title'])
 
     return template('./src/status.html', names = tasks)
 
