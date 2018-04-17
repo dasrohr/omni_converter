@@ -29,6 +29,7 @@ def initialize_db(db_file):
 	    `title`	TEXT NOT NULL, \
 	    `type`	TEXT NOT NULL,  \
 	    `target`	TEXT DEFAULT NULL,  \
+      `date`  TEXT NOT NULL,  \
 	    PRIMARY KEY(filename) \
     )',
     'CREATE TABLE "history" (  \
