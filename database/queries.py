@@ -18,8 +18,8 @@ def check_id(db, *id):
   returm ture if exists
   '''
   cur = db.cursor()
-  result = cur.execute('SELECT id FROM history WHERE id == ?', id).fetchall()
-  if len(result) < 1:
+  result = cur.execute('SELECT count(*) FROM history WHERE id == ?', id).fetchone()[0]
+  if result == 0:
     return False
   return True
 
@@ -30,7 +30,7 @@ def get_filename(db, *id):
   return a touple with the filename and the path to it (only folders, no full filepath)
   '''
   cur = db.cursor()
-  result = cur.execute('SELECT path, filename FROM files WHERE id == ? and type == "f"', id).fetchone()
+  result = cur.execute('SELECT path, filename FROM files WHERE id == ? and type == "f"', id).fetchall()[0]
   if not result:
     return False
   return result
@@ -56,7 +56,6 @@ def add_to_history(db, **kwargs):
   add data to the history database
   '''
   cur = db.cursor()
-  print('DEBUG: {}'.format(kwargs))
   cur.execute('INSERT INTO history VALUES (:id, :source, :date, :playlist, :playlist_id, :url, :source_title)', kwargs)
   db.commit()
 
