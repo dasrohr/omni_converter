@@ -29,7 +29,8 @@ try:
     from hashlib import sha512 as create_hash
     from bottle import template, get, post, request, run, abort, static_file, auth_basic, route
     import database
-except ImportError:
+except Exception as e:
+    print('error: {}'.format(e))
     exit('please ensure that all required modules are installed: celery, validators, hashlib, bottle & that omni_tasks.py is available')
 
 # init database connection (sqlite)
@@ -115,6 +116,23 @@ def server_static(filename):
 @route('/src/status.html')
 @auth_basic(check_cred)
 def status():
-    return template('./src/status.html', name = 'bauer')
+    '''
+    Show the Titles of the currently loaded Videos on Webpage
+    Code is ugly as hell atm - this works but shure there are smarter ways of doing this
+    '''
+    import json
+    tasks = []
+    for task in inspect('active')['celery@toniwarnecke-lp']:
+        tasks.append(json.loads(task['kwargs'].replace("'", "\"").replace("None", "\"\"").replace("False", "\"False\"").replace("[{...}]", "\"gen\""))['source_title'])
+
+    return template('./src/status.html', names = tasks)
+
+def inspect(method):
+    '''
+    inspect function to interact with Celery
+    '''
+    app = Celery('app')
+    return getattr(app.control.inspect(), method)()
+
 
 run(host="0.0.0.0", port=4000)

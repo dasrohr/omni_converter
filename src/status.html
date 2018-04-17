@@ -1,1 +1,7 @@
-Junge
+<%
+if len(names) == 0:
+  names.append('None')
+%>
+% for name in names:
+<p>{{ name }}</p>
+% end
