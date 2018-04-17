@@ -57,7 +57,7 @@ class Video:
         self.title = None                                       # initiate the title (id3-title)
         self.albart = None                                      # initiate the albart
         self.alb = None                                         # initiate the alb
-        self.date = date.now().strftime('%Y-%m-%dT%H:%M:%S')    # date when this download is executed (now)
+        self.date = date.now().strftime('%Y-%m-%d %H:%M:%S')    # date when this download is executed (now)
         self.target = None                                      # initiate the target attribute so that the DB entry can set to NULL. The target is the file the symlinks targets in case we have to symlink
         self.type = 'f'                                         # default indicator if final result is a file or a link - "l" = link
         self.force_folder = False                               # default inidicator if we enforce the path if custom alb/albart entered
