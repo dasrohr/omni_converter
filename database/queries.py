@@ -30,7 +30,7 @@ def get_filename(db, *id):
   return a touple with the filename and the path to it (only folders, no full filepath)
   '''
   cur = db.cursor()
-  result = cur.execute('SELECT path, filename FROM files WHERE id == ?', id).fetchone()
+  result = cur.execute('SELECT path, filename FROM files WHERE id == ? and type == "f"', id).fetchone()
   if not result:
     return False
   return result
