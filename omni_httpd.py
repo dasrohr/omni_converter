@@ -14,7 +14,11 @@ except:
 
 # import the configuration calues from file
 from yaml import safe_load as config_load
-config = config_load(open("./config.yml"))
+from os import path
+if path.isfile()
+    config = config_load(open("./config.yml"))
+else:
+    exit('Missing config file')
 
 # make sure we have all modules we need available
 try:
