@@ -18,7 +18,7 @@ def initialize_db(db_file):
   db = sqlite3.connect(db_file)
   cur = db.cursor()
 
-sql_statements = ['CREATE TABLE "files" ( "id" TEXT NOT NULL, "path" TEXT NOT NULL, "filename" TEXT NOT NULL UNIQUE, "art" TEXT NOT NULL, "albart" TEXT NOT NULL, "alb" TEXT DEFAULT NULL, "title" TEXT NOT NULL, "type" TEXT NOT NULL, "target" TEXT DEFAULT NULL, "date" TEXT NOT NULL, PRIMARY KEY(filename))', 'CREATE TABLE "history" ( "id" TEXT NOT NULL UNIQUE, "source" TEXT NOT NULL, "date" TEXT NOT NULL, "playlist" TEXT DEFAULT NULL, "playlist_id" TEXT DEFAULT NULL, "url" TEXT NOT NULL, "source_title" TEXT NOT NULL, PRIMARY KEY(id))', 'CREATE TABLE "user" ( "username" TEXT NOT NULL UNIQUE, "secret" TEXT NOT NULL, PRIMARY KEY(username))']
+  sql_statements = ['CREATE TABLE "files" ( "id" TEXT NOT NULL, "path" TEXT NOT NULL, "filename" TEXT NOT NULL UNIQUE, "art" TEXT NOT NULL, "albart" TEXT NOT NULL, "alb" TEXT DEFAULT NULL, "title" TEXT NOT NULL, "type" TEXT NOT NULL, "target" TEXT DEFAULT NULL, "date" TEXT NOT NULL, PRIMARY KEY(filename))', 'CREATE TABLE "history" ( "id" TEXT NOT NULL UNIQUE, "source" TEXT NOT NULL, "date" TEXT NOT NULL, "playlist" TEXT DEFAULT NULL, "playlist_id" TEXT DEFAULT NULL, "url" TEXT NOT NULL, "source_title" TEXT NOT NULL, PRIMARY KEY(id))', 'CREATE TABLE "user" ( "username" TEXT NOT NULL UNIQUE, "secret" TEXT NOT NULL, PRIMARY KEY(username))']
   # execute defined statements from above
   for statement in sql_statements:
     cur.execute(statement)
