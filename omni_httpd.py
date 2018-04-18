@@ -124,11 +124,12 @@ def status():
     tasks = []
     inspect_out = inspect('active')
     # extra for needed as Celery packs the values in a dict with the hostname as key
-    for key in inspect_out.keys():
-        for task in inspect_out[key]:
-            tasks.append(json.loads(task['kwargs'].replace("'", "\"").replace("None", "\"\"").replace("False", "\"False\"").replace("[{...}]", "\"gen\""))['source_title'])
+    if inspect_out:
+        for key in inspect_out.keys():
+            for task in inspect_out[key]:
+                tasks.append(json.loads(task['kwargs'].replace("'", "\"").replace("None", "\"None\"").replace("False", "\"False\"").replace("[{...}]", "\"gen\""))['source_title'])
 
-    return template('./src/status.html', names = tasks)
+    return template('./src/status.html', names = tasks, history = database.get_status_histroy(db))
 
 def inspect(method):
     '''

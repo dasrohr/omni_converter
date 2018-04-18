@@ -1,7 +1,36 @@
+<meta http-equiv="refresh" content="10" />
 Currently loading:</br>
 % if len(names) == 0:
 <p>Nothing</p>
 % else:
-% for name in names:
+%  for name in names:
   <p>{{ name }}</p>
+%  end
 % end
+
+<hr>
+History:
+<table style="width:100%" border='1px'>
+  <tr>
+    <th>Date</th>
+    <th>Title</th> 
+    <th>Album Artist</th>
+    <th>Album</th>
+    <th>Type</th>
+    <th>Target (if Link)</th>
+  </tr>
+% for entry in history:
+  <tr>
+<%
+   for value in entry:
+    if value == 'l':
+     value = 'Link'
+    elif value == 'f':
+     value = 'File'
+    end
+%>
+    <td>{{ value }}</td>
+%  end
+% end    
+  </tr>
+  </table>

@@ -48,6 +48,12 @@ def check_for_existing_link(db, id, path):
     return True
   return False
 
+def get_status_histroy(db):
+  '''
+  '''
+  cur = db.cursor()
+  result = cur.execute('SELECT f.date AS f_date, h.source_title, f.albart, f.alb, f.type, f.target FROM files as f JOIN history AS h USING (id) ORDER BY f_date DESC LIMIT 25').fetchall()
+  return result
 
 ''' INSERT DATA '''
 
@@ -65,5 +71,5 @@ def add_file(db, **kwargs):
   '''
   cur = db.cursor()
   print('DEBUG: {}'.format(kwargs))
-  cur.execute('INSERT INTO files VALUES (:id, :path, :filename, :art, :albart, :alb, :title, :type, :target)', kwargs)
+  cur.execute('INSERT INTO files VALUES (:id, :path, :filename, :art, :albart, :alb, :title, :type, :target, :date)', kwargs)
   db.commit()
