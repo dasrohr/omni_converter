@@ -53,7 +53,7 @@ def initialize_db(db_file):
   for statement in sql_statements:
     cur.execute(statement)
 
-  cur.commit()
+  db.commit()
   db.close()
 
 
