@@ -139,4 +139,9 @@ def inspect(method):
     return getattr(app.control.inspect(), method)()
 
 
-run(host="0.0.0.0", port=4000)
+if 'port' in config:
+    port = config['port']
+else:
+    port = 4000
+
+run(host="0.0.0.0", port=port)
