@@ -23,7 +23,7 @@ else:
 # make sure we have all modules we need available
 try:
     from celery import Celery
-    from omni_tasks import handler
+    from omni_tasks import main
     from validators import url as validate_url
     from urllib import parse
     from hashlib import sha512 as create_hash
@@ -100,7 +100,7 @@ def post_form():
         del values['alb']
 
     # start the Handler to initiate Download
-    handler.delay(**values)
+    main.delay(**values)
 
     # answer to user, show values if debug = true
     if 'debug' in values.keys() and values['debug']:
