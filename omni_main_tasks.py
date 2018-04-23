@@ -29,9 +29,11 @@ from requests import get
 from urllib.parse import urlparse
 from yaml import safe_load as config_load
 from datetime import datetime as date
+from time import sleep
 from os import symlink, path, walk, makedirs
 from os import rename as move
 from difflib import get_close_matches
+from omni_side_tasks import ytie, id3, cover
 
 # load the config from file
 if path.isfile('./config.yml'):
@@ -46,7 +48,7 @@ if not path.isfile(config['database_file']):
 db = database.connect(config['database_file'])
 
 # create celery applicatoin and define communication broker
-omni = Celery('omni_worker', brocker='redis://localhost')
+omni = Celery('omni_worker', backend='rpc://localhost')
 
 class Video:
     def __init__(self, **kwargs):
@@ -116,7 +118,9 @@ class Video:
         if not database.check_id(db, self.id):
             database.add_to_history(db, **self.__dict__)
             # check the TODO from above ... catching case where url is invalid, target does not exist
-            download.delay(**self.__dict__)
+            process_video.delay(**self.__dict__)
+
+        #TODO run ytie & create cover if not exist!!!
         # if the ID has been downloaded already, skip the dl and create a link to the loaded file
         else:
             self.type = 'l'
@@ -133,6 +137,8 @@ class Video:
             
             print('{} already loaded'.format(self.id))
             if self.debug: print(self.__dict__)
+        #TODO: it does not matter if a link was created or file downloaded. have to create images if not exist.
+        #      seperate task!?!?!? to keep things goin ... might be kicked off by the dl task ...
 
     def build_path(self, def_albart, def_alb):
         '''
@@ -218,13 +224,6 @@ def get_title_from_id(id):
             }
     return get(url, params=params).json()['items'][0]['snippet']['title']
 
-def ytie(title):
-    '''
-    run the YTIE to clean the title
-    needs a String (Title)
-    returns 
-    '''
-
 def fuzzy_folder(string, depth = None, cutoff = 0.1):
     '''
     do a fuzzy match on folders in a path
@@ -239,7 +238,7 @@ def fuzzy_folder(string, depth = None, cutoff = 0.1):
         work_dir = path.join(work_dir, depth)
 
     print('fuzzy path: ({})'.format(work_dir))
-    # if we doing a fuzzy match on a folder that does not exits, there is nothing to fuzzy match with
+    # if doing a fuzzy match on a folder that does not exits, there is nothing to fuzzy match with
     # so create the folder with the given string and return the string as a match
     # can not do more in this situation
     if path.exists(work_dir):
@@ -255,7 +254,7 @@ def gen_filename(size=20, chars=string.ascii_uppercase + string.ascii_lowercase 
 
 ## 
 @omni.task
-def handler(**opts):
+def main(**opts):
     '''
     the main handler and entry point of the OMNI Downloader
     opts are kw-arguments which gets translated into Object arguments.
@@ -266,7 +265,7 @@ def handler(**opts):
     videos = []
 
     # The HTML Form always sends a vid (VideoID) or pid (PlaylistID)
-    #  So there is sth fishy going on if both are empty
+    # So there is sth fishy going on if both are empty
     if 'vid' in opts:
         # create Video object for the ID
         videos.append(Video(id = opts['vid'], source_title = get_title_from_id(opts['vid']), **opts))
@@ -279,30 +278,54 @@ def handler(**opts):
         exit()
 
     # download every Video Object
-    for video in videos:
+     for video in videos:
         if video.debug: print(video.__dict__)
         video.download()
 
 @omni.task
-def download(**opts):
+def process_video(**opts):
+    '''
+    This is the main download task
+    every video that needs to be downloaded runs its own task
+    this way, there can be as many paralell downloads as worker-queues available
+    as the download task will consume some time till it has finishes,
+    this task executes the main download and file conversation in another subtask.
+    While the actual download is not finished, it runs several other subtasks (like YTIE, Cover creation)
+    to reduce the total time needed for every video to finish
+    after the file has been loaded, this tasks runs the id3-tag-task to write the id3 tags to the file.
+    '''
     if opts['debug']: print('start dl: {}'.format(opts['video_title']))
-    if not opts['simulate']:
-        # download
-        # note that URL get passed as a list for youtube-dl to work
-        youtube_dl.YoutubeDL(opts['dl_opts']).download([opts['url'],])
-        # TODO
-        # Idea: As the DL will take a moment, and so do ytie
-        #  might be worth to kick off the dl in a seperate task, then run ytie and then wait until the dl has finished
-        #  by checking the task state untill FINISHED
-        #  there comes sth in mind with .state or .ready
-        # ytie here
-        # create images
-        # file tags here
-        # move the downloaded file to the desired place as defined in 'path'
-        move(path.join(config['download_root'], opts['filename'] + '.mp3'), path.join(opts['path'], opts['filename'] + '.mp3'))
-        # add the file to the db
-        database.add_file(db, **opts)
+
+    # download
+    task_dl = download.delay(opts['dl_opts'], opts['url'])
+
+    # run ytie and wait for it to finish
+    opts['art'], opts['title'] = ytie.delay(opts['source_title']).wait()
+    # TODO with a valid artist and title, alter the db entry
+
+    # TODO
+    # cover
+
+    # after everything is done, wait for the download to finish
+    while task_dl not == 'FINISHED':
+        sleep(3)
+
+    # dl done
+    # TODO
+    # write tags
+
+    # move the downloaded file to the desired place as defined in 'path'
+    move(path.join(config['download_root'], opts['filename'] + '.mp3'), path.join(opts['path'], opts['filename'] + '.mp3'))
+    # add the file to the db
+    database.add_file(db, **opts)
     if opts['debug']: print('finish dl: {} - simulated: {}'.format(opts['video_title'], opts['simulate']))
+
+@omni_task(track_started=True)
+def download(opts, url)
+    '''
+    this task runs the actual download and file conversation of the defined video object
+    '''
+    youtube_dl.YoutubeDL(opts).download([url])
 
 #def load(url_path):
 #    """ task to load a video and convert it into mp3 """
